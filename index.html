@@ -275,10 +275,44 @@ function loadStream() {
   playerFrame.src = match.streams[currentStreamIndex];
 }
 
-// Timer update
-if (elapsed < 45 * 60) { displayText = Match Timer: ${formatTime(elapsed)} (1st Half); } else if (elapsed < 45 * 60 + 5 * 60) { displayText = Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time); } else if (elapsed < 60 * 60) { displayText = Halftime Break: ${formatTime(elapsed - 50*60)}; } else if (elapsed < 105 * 60) { displayText = Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half); } else if (elapsed < 110 * 60) { displayText = Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time); } else { displayText = "Full Time"; clearInterval(timerInterval); } timerDisplay.textContent = displayText; }, 1000); }
+// MATCH TIMER LOGIC
+function startMatchTimer() {
+  const match = matches[currentMatchIndex];
+  const startTime = new Date(match.startTime);
+  const now = new Date();
 
-setInterval(updateTimer, 1000);
+  timerInterval = setInterval(() => {
+    const currentTime = new Date();
+    let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
+
+    if (elapsed < 0) elapsed = 60; // countdown until match starts
+    let displayText = "";
+
+    // Game phases
+    if (elapsed < 45 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed)} (1st Half)`;
+    } else if (elapsed < 45 * 60 + 5 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time)`;
+    } else if (elapsed < 60 * 60) {
+      displayText = `Halftime Break: ${formatTime(elapsed - 50*60)}`;
+    } else if (elapsed < 105 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half)`;
+    } else if (elapsed < 110 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time)`;
+    } else {
+      displayText = "Full Time";
+      clearInterval(timerInterval);
+    }
+
+    timerDisplay.textContent = displayText;
+  }, 1000);
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
 
 // Initialize first match
 selectMatch(0);
