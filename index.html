@@ -53,61 +53,47 @@
   </style>
 </head>
 <body>
-  <nav>
-    <button onclick="openTab(1)" class="active">Tottenham VS Burnley</button>
-    <button onclick="openTab(2)">Sunderland VS West Ham</button>
-    <button onclick="openTab(3)">Wolves VS Man City</button>
-    <button onclick="openTab(4)">Match 4</button>
-    <button onclick="openTab(5)">Match 5</button>
-    <button onclick="openTab(6)">Match 6</button>
-    <button onclick="openTab(7)">Match 7</button>
-    <button onclick="openTab(8)">Match 8</button>
-    <button onclick="openTab(9)">Match 9</button>
-    <button onclick="openTab(10)">Match 10</button>
-  </nav>
+  <nav id="tabs"></nav>
 
-  <!-- Tab contents -->
-  <div id="tab1" class="tabcontent active">
-    <iframe src="https://embedsports.top/embed/alpha/tottenham-hotspur-vs-burnley/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab2" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/sunderland-vs-west-ham-united/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab3" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/man-city-vs-liverpool/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab4" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/man-united-vs-leeds/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab5" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/barcelona-vs-real-madrid/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab6" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/psg-vs-marseille/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab7" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/ac-milan-vs-inter/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab8" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/bayern-vs-dortmund/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab9" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/juventus-vs-napoli/1" allowfullscreen></iframe>
-  </div>
-  <div id="tab10" class="tabcontent">
-    <iframe src="https://embedsports.top/embed/alpha/ajax-vs-psv/1" allowfullscreen></iframe>
+  <!-- Just paste your iframe inside a div.tabcontent -->
+  <div id="matches">
+    <div class="tabcontent active" data-title="Match 1">
+      <iframe src="https://embedsports.top/embed/alpha/tottenham-hotspur-vs-burnley/1" allowfullscreen></iframe>
+    </div>
+
+    <div class="tabcontent" data-title="Match 2">
+      <iframe src="https://embedsports.top/embed/alpha/sunderland-vs-west-ham-united/1" allowfullscreen></iframe>
+    </div>
+
+    <!-- 🔥 Add new games like this -->
+    <!--
+    <div class="tabcontent" data-title="Match 3">
+      <iframe src="YOUR_NEW_EMBED_URL" allowfullscreen></iframe>
+    </div>
+    -->
   </div>
 
   <script>
-    function openTab(tabIndex) {
-      // Hide all tabs
-      document.querySelectorAll('.tabcontent').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+    // Build tab buttons automatically from your divs
+    const tabs = document.getElementById("tabs");
+    const contents = document.querySelectorAll(".tabcontent");
 
-      // Show selected tab
-      document.getElementById('tab' + tabIndex).classList.add('active');
-      document.querySelectorAll('nav button')[tabIndex - 1].classList.add('active');
-    }
+    contents.forEach((content, index) => {
+      const title = content.dataset.title || `Match ${index+1}`;
+      const button = document.createElement("button");
+      button.textContent = title;
+      if (content.classList.contains("active")) button.classList.add("active");
+
+      button.addEventListener("click", () => {
+        contents.forEach(c => c.classList.remove("active"));
+        document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+
+        content.classList.add("active");
+        button.classList.add("active");
+      });
+
+      tabs.appendChild(button);
+    });
   </script>
 </body>
 </html>
