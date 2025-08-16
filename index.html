@@ -2,119 +2,138 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sports Player Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Sports Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background: #000;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body, html { height: 100%; width: 100%; font-family: 'Roboto', sans-serif; background: #0f0f0f; color: #fff; }
+  
+  header {
+    position: fixed; top: 0; width: 100%; background: #111;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 20px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   }
-  nav {
-    background: #111;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    gap: 10px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+
+  .tabs {
+    display: flex; gap: 10px;
   }
-  nav button {
-    background: #222;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
+
+  .tabs button {
+    background: #222; color: #fff; border: none; padding: 10px 20px;
+    border-radius: 6px; cursor: pointer; transition: all 0.3s;
+    font-weight: 500;
+  }
+
+  .tabs button.active {
+    background: #007bff; box-shadow: 0 0 10px #007bff;
+  }
+
+  .tabs button:hover:not(.active) { background: #333; }
+
+  .stream-select {
+    background: #222; color: #fff; border: none; padding: 10px 15px;
+    border-radius: 6px; font-size: 16px; cursor: pointer;
     transition: background 0.3s;
   }
-  nav button.active {
-    background: #007bff;
+
+  .stream-select:hover { background: #333; }
+
+  main {
+    position: absolute; top: 70px; bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: center; align-items: center;
+    background: #000;
+    padding: 10px;
   }
-  nav button:hover {
-    background: #444;
+
+  iframe {
+    width: 100%; height: 100%; border: none; border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
   }
-  .tabcontent {
-    display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  .tabcontent.active {
-    display: block;
-  }
-  .tabcontent iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+
+  @media (max-width: 768px) {
+    header { flex-direction: column; gap: 10px; }
+    .tabs { flex-wrap: wrap; justify-content: center; }
   }
 </style>
 </head>
 <body>
-<nav id="tabs"></nav>
 
-  <!-- Just paste your iframe inside a div.tabcontent -->
-  <div id="matches">
-    <div class="tabcontent active">
-      <iframe 
-        title="Lens VS Lyon"
-        src="https://embedsports.top/embed/alpha/lens-vs-lyon/1" 
-        allowfullscreen>
-      </iframe>
-    </div>
+<header>
+  <div class="tabs" id="tabs"></div>
+  <select class="stream-select" id="streamSelect"></select>
+</header>
 
-    <div class="tabcontent">
-      <iframe 
-        title="Wolves VS Man City"
-        src="https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <!-- 🔥 Add new games just by pasting iframes like this -->
-    <!--
-    <div class="tabcontent">
-      <iframe 
-        title="Man City vs Liverpool"
-        src="YOUR_NEW_EMBED_URL" 
-        allowfullscreen>
-      </iframe>
-    </div>
-    -->
-  </div>
+<main>
+  <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
+</main>
 
 <script>
+const matches = [
+  {
+    name: "Wolves VS Man City",
+    streams: [
+      "https://embedsports.top/embed/admin/admin-wolverhampton-wanderers-vs-manchester-city/1",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/2",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/3",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/4",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/5"
+    ]
+  },
+  {
+    name: "Chelsea vs Arsenal",
+    streams: [
+      "https://embedsports.top/embed/admin/admin-lens-vs-lyon/1",
+      "https://embedsports.top/embed/alpha/lens-vs-lyon/1",
+      "https://embedsports.top/embed/alpha/lens-vs-lyon/2"
+    ]
+  }
+];
+
 const tabs = document.getElementById("tabs");
-const contents = document.querySelectorAll(".tabcontent");
+const streamSelect = document.getElementById("streamSelect");
+const playerFrame = document.getElementById("playerFrame");
 
-// Generate buttons from iframe titles
-contents.forEach((content, index) => {
-  const iframe = content.querySelector("iframe");
-  const title = iframe.getAttribute("title") || `Match ${index+1}`;
+let currentMatchIndex = 0;
 
+// Create tab buttons
+matches.forEach((match, index) => {
   const button = document.createElement("button");
-  button.textContent = title;
-  if (content.classList.contains("active")) button.classList.add("active");
+  button.textContent = match.name;
+  if(index === 0) button.classList.add("active");
 
   button.addEventListener("click", () => {
-    // Hide all tabs
-    contents.forEach(c => c.classList.remove("active"));
-    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-
-    // Show the selected tab
-    content.classList.add("active");
+    currentMatchIndex = index;
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
     button.classList.add("active");
+    updateStreams();
   });
 
   tabs.appendChild(button);
 });
+
+// Populate dropdown and set iframe
+function updateStreams() {
+  const match = matches[currentMatchIndex];
+  streamSelect.innerHTML = "";
+  match.streams.forEach((stream, i) => {
+    const option = document.createElement("option");
+    option.value = stream;
+    option.textContent = `Stream ${i+1}`;
+    streamSelect.appendChild(option);
+  });
+  playerFrame.src = match.streams[0];
+}
+
+// Switch iframe on dropdown change
+streamSelect.addEventListener("change", () => {
+  playerFrame.src = streamSelect.value;
+});
+
+// Initialize first match
+updateStreams();
 </script>
+
 </body>
 </html>
