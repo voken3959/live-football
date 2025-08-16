@@ -1,59 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sports Player Hub</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    nav {
-      background: #111;
-      display: flex;
-      justify-content: center;
-      padding: 10px;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    nav button {
-      background: #222;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 6px;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    nav button.active {
-      background: #007bff;
-    }
-    nav button:hover {
-      background: #444;
-    }
-    .tabcontent {
-      flex: 1;
-      width: 100%;
-      display: none;
-    }
-    .tabcontent iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    .tabcontent.active {
-      display: block;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Sports Player Hub</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  nav {
+    background: #111;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  nav button {
+    background: #222;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  nav button.active {
+    background: #007bff;
+  }
+  nav button:hover {
+    background: #444;
+  }
+  .tabcontent {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .tabcontent.active {
+    display: block;
+  }
+  .tabcontent iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 </head>
 <body>
-  <nav id="tabs"></nav>
+<nav id="tabs"></nav>
 
   <!-- Just paste your iframe inside a div.tabcontent -->
   <div id="matches">
@@ -85,30 +90,31 @@
     -->
   </div>
 
-  <script>
-    // Build tab buttons automatically from iframe titles
-    const tabs = document.getElementById("tabs");
-    const contents = document.querySelectorAll(".tabcontent");
+<script>
+const tabs = document.getElementById("tabs");
+const contents = document.querySelectorAll(".tabcontent");
 
-    contents.forEach((content, index) => {
-      const iframe = content.querySelector("iframe");
-      const title = iframe.getAttribute("title") || `Match ${index+1}`;
+// Generate buttons from iframe titles
+contents.forEach((content, index) => {
+  const iframe = content.querySelector("iframe");
+  const title = iframe.getAttribute("title") || `Match ${index+1}`;
 
-      const button = document.createElement("button");
-      button.textContent = title;
+  const button = document.createElement("button");
+  button.textContent = title;
+  if (content.classList.contains("active")) button.classList.add("active");
 
-      if (content.classList.contains("active")) button.classList.add("active");
+  button.addEventListener("click", () => {
+    // Hide all tabs
+    contents.forEach(c => c.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
 
-      button.addEventListener("click", () => {
-        contents.forEach(c => c.classList.remove("active"));
-        document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    // Show the selected tab
+    content.classList.add("active");
+    button.classList.add("active");
+  });
 
-        content.classList.add("active");
-        button.classList.add("active");
-      });
-
-      tabs.appendChild(button);
-    });
-  </script>
+  tabs.appendChild(button);
+});
+</script>
 </body>
 </html>
