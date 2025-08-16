@@ -3,86 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra Advanced Match Streams</title>
+<title>Ultra Stream Dashboard with Timer</title>
 <style>
   body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #111;
+    font-family: 'Segoe UI', sans-serif;
+    background: #121212;
     color: #fff;
     display: flex;
     flex-direction: column;
     height: 100vh;
   }
+
   header {
+    padding: 10px 20px;
+    background: #1f1f1f;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(90deg, #1a1a1a, #222);
-    padding: 10px 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    flex-wrap: wrap;
   }
+
+  header h1 { margin: 0; font-size: 1.3rem; }
+
   .tabs {
     display: flex;
     gap: 10px;
   }
+
   .tab {
-    padding: 8px 16px;
-    background: #222;
+    padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+    background: #2a2a2a;
     transition: background 0.3s;
   }
-  .tab.active {
-    background: #ff4500;
-    font-weight: bold;
-  }
+
+  .tab.active { background: #ff6600; }
+
   select {
-    padding: 5px;
-    font-size: 16px;
-    margin-left: 10px;
-  }
-  #timer {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  #warning {
-    background: #b00;
     padding: 5px 10px;
-    margin-top: 5px;
-    text-align: center;
-    display: none;
-    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    background: #2a2a2a;
+    color: #fff;
   }
-  #player-container {
+
+  #statusBar {
+    padding: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a1a;
+    font-size: 0.9rem;
+  }
+
+  #statusBar .warning { color: #ffcc00; }
+
+  #playerContainer {
     flex: 1;
-    width: 100%;
-    height: calc(100% - 70px);
     position: relative;
   }
+
   iframe {
     width: 100%;
     height: 100%;
     border: none;
+  }
+
+  #timer {
+    font-weight: bold;
+    font-size: 1.1rem;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="tabs" id="match-tabs"></div>
-  <div>
-    Stream:
-    <select id="stream-select"></select>
-    <span id="timer">00:00</span>
-  </div>
+  <h1>Ultra Stream Dashboard</h1>
+  <div class="tabs" id="matchTabs"></div>
+  <select id="streamSelect"></select>
 </header>
 
-<div id="warning">⚠️ First stream may experience issues!</div>
-<div id="player-container">
-  <iframe id="player-frame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
+<div id="statusBar">
+  <div class="warning" id="warning">⚠️ This stream may experience issues</div>
+  <div id="timer">Match Timer: 00:00</div>
 </div>
 
+<div id="playerContainer">
+  <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
+</div>
+  
 <script>
 const matches = [
   {
@@ -121,114 +133,102 @@ const matches = [
   }
 ];
 
-const playerFrame = document.getElementById("player-frame");
-const streamSelect = document.getElementById("stream-select");
-const warning = document.getElementById("warning");
-const timerEl = document.getElementById("timer");
-const tabsContainer = document.getElementById("match-tabs");
-
 let currentMatchIndex = 0;
 let timerInterval;
 
-// -------------------- FUNCTIONS --------------------
-// Create match tabs
-function createTabs() {
-  tabsContainer.innerHTML = "";
+const streamSelect = document.getElementById("streamSelect");
+const playerFrame = document.getElementById("playerFrame");
+const warning = document.getElementById("warning");
+const timerDisplay = document.getElementById("timer");
+const matchTabs = document.getElementById("matchTabs");
+
+function updateStreams() {
+  const match = matches[currentMatchIndex];
+  streamSelect.innerHTML = "";
+  match.streams.forEach((stream, i) => {
+    const option = document.createElement("option");
+    option.value = stream;
+    option.textContent = `Stream ${i+1}`;
+    streamSelect.appendChild(option);
+  });
+  loadStream(match.streams[0], true);
+}
+
+function loadStream(url, firstStream = false) {
+  playerFrame.src = url;
+  warning.style.display = firstStream ? 'block' : 'none';
+}
+
+streamSelect.addEventListener("change", () => {
+  const match = matches[currentMatchIndex];
+  const firstStream = streamSelect.value === match.streams[0];
+  loadStream(streamSelect.value, firstStream);
+});
+
+function setupTabs() {
+  matchTabs.innerHTML = "";
   matches.forEach((match, index) => {
     const tab = document.createElement("div");
-    tab.classList.add("tab");
-    if (index === currentMatchIndex) tab.classList.add("active");
-    tab.textContent = match.title;
-    tab.onclick = () => switchMatch(index);
-    tabsContainer.appendChild(tab);
+    tab.className = "tab" + (index === 0 ? " active" : "");
+    tab.textContent = match.name;
+    tab.addEventListener("click", () => switchMatch(index));
+    matchTabs.appendChild(tab);
   });
 }
 
-// Switch match
 function switchMatch(index) {
   currentMatchIndex = index;
   document.querySelectorAll('.tab').forEach((t, i) => {
     t.classList.toggle('active', i === index);
   });
-  populateStreams();
-  loadStream(matches[index].streams[0], true);
-  startMatchTimer(new Date(matches[index].startTime));
-}
-
-// Populate streams dropdown
-function populateStreams() {
-  const match = matches[currentMatchIndex];
-  streamSelect.innerHTML = "";
-  match.streams.forEach((url, idx) => {
-    const option = document.createElement("option");
-    option.value = url;
-    option.text = `Stream ${idx + 1}`;
-    streamSelect.appendChild(option);
-  });
-}
-
-// Load selected stream
-function loadStream(url, firstStream = false) {
-  playerFrame.src = url;
-  warning.style.display = firstStream ? "block" : "none";
-  setTimeout(() => {
-    // Fallback check
-    if (!playerFrame.contentWindow?.document) switchToNextStream();
-  }, 10000);
-}
-
-// Switch to next stream
-function switchToNextStream() {
-  const match = matches[currentMatchIndex];
-  let currentIndex = match.streams.indexOf(playerFrame.src);
-  let nextIndex = (currentIndex + 1) % match.streams.length;
-  loadStream(match.streams[nextIndex], nextIndex === 0);
-  streamSelect.value = match.streams[nextIndex];
-}
-
-// Stream dropdown listener
-streamSelect.addEventListener("change", () => {
-  loadStream(streamSelect.value, streamSelect.selectedIndex === 0);
-});
-
-// -------------------- MATCH TIMER --------------------
-function startMatchTimer(startTime) {
+  updateStreams();
   clearInterval(timerInterval);
-  function updateTimer() {
-    const now = new Date();
-    let elapsed = Math.floor((now - startTime) / 1000);
-    let phase = "", minutes = 0, seconds = 0;
+  startMatchTimer();
+}
 
-    if (elapsed < 2700) { // 0-45 + 5 added
-      phase = "1st Half";
-      minutes = Math.min(Math.floor(elapsed / 60), 50);
-      seconds = elapsed % 60;
-    } else if (elapsed < 3600) { // 15 min break
-      phase = "Half-time";
-      minutes = Math.floor((elapsed - 2700)/60);
-      seconds = (elapsed - 2700)%60;
-    } else if (elapsed < 6300) { // 45-90 + 5 added
-      phase = "2nd Half";
-      let secondHalfElapsed = elapsed - 3600;
-      minutes = 45 + Math.min(Math.floor(secondHalfElapsed/60), 50);
-      seconds = secondHalfElapsed % 60;
+// MATCH TIMER LOGIC
+function startMatchTimer() {
+  const match = matches[currentMatchIndex];
+  const startTime = new Date(match.startTime);
+  const now = new Date();
+
+  timerInterval = setInterval(() => {
+    const currentTime = new Date();
+    let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
+
+    if (elapsed < 0) elapsed = 0; // countdown until match starts
+    let displayText = "";
+
+    // Game phases
+    if (elapsed < 45 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed)} (1st Half)`;
+    } else if (elapsed < 45 * 60 + 5 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time)`;
+    } else if (elapsed < 60 * 60) {
+      displayText = `Halftime Break: ${formatTime(elapsed - 50*60)}`;
+    } else if (elapsed < 105 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half)`;
+    } else if (elapsed < 110 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time)`;
     } else {
-      phase = "Full-time";
-      minutes = 90;
-      seconds = 0;
+      displayText = "Full Time";
       clearInterval(timerInterval);
     }
-    timerEl.textContent = `${phase}: ${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-  }
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
+
+    timerDisplay.textContent = displayText;
+  }, 1000);
 }
 
-// -------------------- INIT --------------------
-createTabs();
-populateStreams();
-loadStream(matches[0].streams[0], true);
-startMatchTimer(new Date(matches[0].startTime));
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+// Initialize
+setupTabs();
+updateStreams();
+startMatchTimer();
 </script>
 
 </body>
