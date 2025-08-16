@@ -3,89 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Sports Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Match Streams</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body, html { height: 100%; width: 100%; font-family: 'Roboto', sans-serif; background: #0f0f0f; color: #fff; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #121212;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
 
   header {
-    position: fixed; top: 0; width: 100%; background: #111;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 20px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.7);
-    transition: background 0.3s;
+    padding: 10px 20px;
+    background: #1f1f1f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  header:hover { background: #1a1a1a; }
+  header h1 { margin: 0; font-size: 1.2rem; }
 
-  .tabs {
-    display: flex; gap: 10px;
-    overflow-x: auto; scrollbar-width: thin; scrollbar-color: #444 #111;
+  select {
+    padding: 5px 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    background: #2a2a2a;
+    color: #fff;
   }
 
-  .tabs::-webkit-scrollbar { height: 6px; }
-  .tabs::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-
-  .tabs button {
-    background: #222; color: #fff; border: none; padding: 10px 20px;
-    border-radius: 6px; cursor: pointer; font-weight: 500;
-    transition: all 0.3s, transform 0.2s;
+  #statusBar {
+    padding: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a1a;
+    font-size: 0.9rem;
   }
 
-  .tabs button.active {
-    background: #007bff; box-shadow: 0 0 15px #007bff;
-    transform: scale(1.05);
-  }
+  #statusBar .warning { color: #ffcc00; }
+  #statusBar .latency { font-weight: bold; }
 
-  .tabs button:hover:not(.active) { background: #333; }
-
-  .stream-select {
-    background: #222; color: #fff; border: none; padding: 10px 15px;
-    border-radius: 6px; font-size: 16px; cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .stream-select:hover { background: #333; }
-
-  main {
-    position: absolute; top: 70px; bottom: 0; left: 0; right: 0;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    background: #000; padding: 10px;
-  }
-
-  #warning {
-    width: 100%; text-align: center; padding: 8px 10px;
-    background: #ff4c4c; color: #fff; border-radius: 6px;
-    margin-bottom: 10px; font-weight: 500;
-    display: none;
-    animation: fadeIn 0.5s ease-in-out;
+  #playerContainer {
+    flex: 1;
+    position: relative;
   }
 
   iframe {
-    width: 100%; height: 100%; border: none; border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.7);
-    transition: all 0.3s ease-in-out;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
-  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-
-  @media (max-width: 768px) {
-    header { flex-direction: column; gap: 10px; }
-    .tabs { flex-wrap: nowrap; }
+  #connectionIndicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 10px;
+    display: inline-block;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="tabs" id="tabs"></div>
-  <select class="stream-select" id="streamSelect"></select>
+  <h1>Match Stream Dashboard</h1>
+  <select id="streamSelect"></select>
 </header>
 
-<main>
-  <div id="warning">⚠️ This stream may experience issues. A switch is recommended. </div>
+<div id="statusBar">
+  <div class="warning" id="warning">⚠️ This stream may experience issues</div>
+  <div class="latency" id="latency">Latency: 0s <span id="connectionIndicator"></span></div>
+</div>
+
+<div id="playerContainer">
   <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
-</main>
+</div>
+
 
 <script>
 const matches = [
@@ -122,30 +118,32 @@ const matches = [
   }
 ];
 
-const tabs = document.getElementById("tabs");
+let currentMatchIndex = 0;
 const streamSelect = document.getElementById("streamSelect");
 const playerFrame = document.getElementById("playerFrame");
 const warning = document.getElementById("warning");
+const latencyDisplay = document.getElementById("latency");
+const connectionIndicator = document.getElementById("connectionIndicator");
+let latency = 0;
+let latencyInterval;
 
-let currentMatchIndex = 0;
+function startLatencyTimer() {
+  clearInterval(latencyInterval);
+  latency = 0;
+  latencyDisplay.textContent = `Latency: ${latency}s `;
+  latencyDisplay.appendChild(connectionIndicator);
 
-// Create tab buttons with animation
-matches.forEach((match, index) => {
-  const button = document.createElement("button");
-  button.textContent = match.name;
-  if(index === 0) button.classList.add("active");
+  latencyInterval = setInterval(() => {
+    latency++;
+    latencyDisplay.textContent = `Latency: ${latency}s `;
+    latencyDisplay.appendChild(connectionIndicator);
+    // Simulate connection quality
+    if(latency < 5) connectionIndicator.style.background = 'green';
+    else if(latency < 10) connectionIndicator.style.background = 'yellow';
+    else connectionIndicator.style.background = 'red';
+  }, 1000);
+}
 
-  button.addEventListener("click", () => {
-    currentMatchIndex = index;
-    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
-    updateStreams();
-  });
-
-  tabs.appendChild(button);
-});
-
-// Populate dropdown and set iframe
 function updateStreams() {
   const match = matches[currentMatchIndex];
   streamSelect.innerHTML = "";
@@ -155,19 +153,19 @@ function updateStreams() {
     option.textContent = `Stream ${i+1}`;
     streamSelect.appendChild(option);
   });
+
   playerFrame.src = match.streams[0];
-  warning.style.display = match.streams[0] === match.streams[0] ? 'block' : 'none';
+  warning.style.display = 'block';
+  startLatencyTimer();
 }
 
-// Switch iframe on dropdown change
 streamSelect.addEventListener("change", () => {
-  playerFrame.src = streamSelect.value;
-  // Show warning only if first stream is selected
   const match = matches[currentMatchIndex];
+  playerFrame.src = streamSelect.value;
   warning.style.display = streamSelect.value === match.streams[0] ? 'block' : 'none';
+  startLatencyTimer();
 });
 
-// Initialize first match
 updateStreams();
 </script>
 
