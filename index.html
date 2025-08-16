@@ -75,6 +75,7 @@
   #statusBar .status-loading { color: #00ccff; }
   #statusBar .status-active { color: #00ff00; }
   #statusBar .status-frozen { color: #ff4444; }
+  #statusBar .status-not-playing { color: #ffcc00; }
 
   #timer {
     font-weight: 600;
@@ -344,8 +345,9 @@ let currentMatchIndex = 0;
 let currentStreamIndex = 0;
 let currentPage = 'schedule';
 let timerInterval = null;
-let lastStreamUpdate = null;
+let streamLoadTimeout = null;
 let streamCheckInterval = null;
+let isStreamPlaying = false;
 
 const navTabs = document.getElementById('navTabs');
 const scheduleGrid = document.getElementById('scheduleGrid');
@@ -375,14 +377,18 @@ function updatePage() {
     renderSchedule();
     if (timerInterval) clearInterval(timerInterval);
     if (streamCheckInterval) clearInterval(streamCheckInterval);
+    if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
     streamStatus.textContent = '⚠️ Stream may experience interruptions';
     streamStatus.className = 'warning';
+    isStreamPlaying = false;
   } else if (currentPage === 'streams') {
     renderStreams();
     if (timerInterval) clearInterval(timerInterval);
     if (streamCheckInterval) clearInterval(streamCheckInterval);
+    if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
     streamStatus.textContent = '⚠️ Stream may experience interruptions';
     streamStatus.className = 'warning';
+    isStreamPlaying = false;
   } else if (currentPage === 'match') {
     loadStream();
     startMatchTimer();
@@ -414,6 +420,7 @@ function renderSchedule() {
       `;
       item.onclick = () => {
         currentMatchIndex = index;
+        currentStreamIndex = 0; // Reset stream index when selecting a new match
         currentPage = 'streams';
         updatePage();
       };
@@ -442,44 +449,61 @@ function renderStreams() {
 // Load stream and monitor load status
 function loadStream() {
   const match = matches[currentMatchIndex];
+  if (currentStreamIndex >= match.streams.length) {
+    streamStatus.textContent = 'No more streams available';
+    streamStatus.className = 'status-frozen';
+    return;
+  }
+
   playerFrame.src = match.streams[currentStreamIndex];
   streamStatus.textContent = 'Loading stream...';
   streamStatus.className = 'status-loading';
+  isStreamPlaying = false;
+
+  // Set timeout to check if stream loads within 5 seconds
+  if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
+  streamLoadTimeout = setTimeout(() => {
+    if (!isStreamPlaying) {
+      streamStatus.textContent = 'Stream failed to load, trying another link';
+      streamStatus.className = 'status-frozen';
+      currentStreamIndex = (currentStreamIndex + 1) % match.streams.length; // Cycle to next stream
+      loadStream(); // Try next stream
+    }
+  }, 5000);
 
   playerFrame.onload = () => {
+    // Simulate audio detection (cross-origin prevents actual audio check)
+    isStreamPlaying = true;
     streamStatus.textContent = 'Stream active';
     streamStatus.className = 'status-active';
-    lastStreamUpdate = Date.now();
+    if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
   };
 
-  // Handle load errors
   playerFrame.onerror = () => {
-    streamStatus.textContent = 'Stream failed to load';
+    isStreamPlaying = false;
+    streamStatus.textContent = 'Stream failed to load, trying another link';
     streamStatus.className = 'status-frozen';
+    currentStreamIndex = (currentStreamIndex + 1) % match.streams.length; // Cycle to next stream
+    loadStream(); // Try next stream
   };
 }
 
-// Check for stream freezes
+// Check for stream playback status
 function startStreamCheck() {
   if (streamCheckInterval) clearInterval(streamCheckInterval);
-  lastStreamUpdate = Date.now();
 
   streamCheckInterval = setInterval(() => {
-    const now = Date.now();
-    if (lastStreamUpdate && now - lastStreamUpdate > 10000) { // 10 seconds without update
-      streamStatus.textContent = 'Stream frozen';
-      streamStatus.className = 'status-frozen';
-    } else if (streamStatus.className === 'status-active') {
+    if (currentPage !== 'match') return;
+
+    // Simulate checking if stream is playing (since we can't access iframe audio)
+    if (isStreamPlaying) {
       streamStatus.textContent = 'Stream active';
+      streamStatus.className = 'status-active';
+    } else {
+      streamStatus.textContent = 'Stream not playing';
+      streamStatus.className = 'status-not-playing';
     }
   }, 2000);
-
-  // Simulate stream activity (since we can't directly access iframe video state)
-  setInterval(() => {
-    if (currentPage === 'match' && streamStatus.className === 'status-active') {
-      lastStreamUpdate = Date.now();
-    }
-  }, 5000);
 }
 
 // MATCH TIMER LOGIC
