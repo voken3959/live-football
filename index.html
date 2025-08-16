@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra Stream Dashboard</title>
+<title>Ultra Stream Dashboard with Timer</title>
 <style>
   body {
     margin: 0;
@@ -60,7 +60,6 @@
   }
 
   #statusBar .warning { color: #ffcc00; }
-  #statusBar .latency { font-weight: bold; }
 
   #playerContainer {
     flex: 1;
@@ -73,17 +72,9 @@
     border: none;
   }
 
-  #connectionIndicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-left: 10px;
-    display: inline-block;
-  }
-
-  /* Animation for smooth latency change */
-  .latency, #connectionIndicator {
-    transition: all 0.3s ease;
+  #timer {
+    font-weight: bold;
+    font-size: 1.1rem;
   }
 </style>
 </head>
@@ -97,7 +88,7 @@
 
 <div id="statusBar">
   <div class="warning" id="warning">⚠️ This stream may experience issues</div>
-  <div class="latency" id="latency">Latency: 0s <span id="connectionIndicator"></span></div>
+  <div id="timer">Match Timer: 00:00</div>
 </div>
 
 <div id="playerContainer">
@@ -140,34 +131,13 @@ const matches = [
 ];
 
 let currentMatchIndex = 0;
-let latency = 0;
-let latencyInterval;
+let timerInterval;
 
 const streamSelect = document.getElementById("streamSelect");
 const playerFrame = document.getElementById("playerFrame");
 const warning = document.getElementById("warning");
-const latencyDisplay = document.getElementById("latency");
-const connectionIndicator = document.getElementById("connectionIndicator");
+const timerDisplay = document.getElementById("timer");
 const matchTabs = document.getElementById("matchTabs");
-
-function startLatencyTimer() {
-  clearInterval(latencyInterval);
-  latency = 0;
-  updateLatencyDisplay();
-  latencyInterval = setInterval(() => {
-    latency++;
-    updateLatencyDisplay();
-  }, 1000);
-}
-
-function updateLatencyDisplay() {
-  latencyDisplay.textContent = `Latency: ${latency}s `;
-  latencyDisplay.appendChild(connectionIndicator);
-
-  if(latency < 5) connectionIndicator.style.background = 'green';
-  else if(latency < 10) connectionIndicator.style.background = 'yellow';
-  else connectionIndicator.style.background = 'red';
-}
 
 function updateStreams() {
   const match = matches[currentMatchIndex];
@@ -178,14 +148,12 @@ function updateStreams() {
     option.textContent = `Stream ${i+1}`;
     streamSelect.appendChild(option);
   });
-
   loadStream(match.streams[0], true);
 }
 
 function loadStream(url, firstStream = false) {
   playerFrame.src = url;
   warning.style.display = firstStream ? 'block' : 'none';
-  startLatencyTimer();
 }
 
 streamSelect.addEventListener("change", () => {
@@ -211,11 +179,53 @@ function switchMatch(index) {
     t.classList.toggle('active', i === index);
   });
   updateStreams();
+  clearInterval(timerInterval);
+  startMatchTimer();
 }
 
-// Initialize dashboard
+// MATCH TIMER LOGIC
+function startMatchTimer() {
+  const match = matches[currentMatchIndex];
+  const startTime = new Date(match.startTime);
+  const now = new Date();
+
+  timerInterval = setInterval(() => {
+    const currentTime = new Date();
+    let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
+
+    if (elapsed < 0) elapsed = 0; // countdown until match starts
+    let displayText = "";
+
+    // Game phases
+    if (elapsed < 45 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed)} (1st Half)`;
+    } else if (elapsed < 45 * 60 + 5 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time)`;
+    } else if (elapsed < 60 * 60) {
+      displayText = `Halftime Break: ${formatTime(elapsed - 50*60)}`;
+    } else if (elapsed < 105 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half)`;
+    } else if (elapsed < 110 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time)`;
+    } else {
+      displayText = "Full Time";
+      clearInterval(timerInterval);
+    }
+
+    timerDisplay.textContent = displayText;
+  }, 1000);
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+// Initialize
 setupTabs();
 updateStreams();
+startMatchTimer();
 </script>
 
 </body>
