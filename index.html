@@ -29,6 +29,7 @@
   .tabs {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
   .tab {
@@ -224,101 +225,71 @@ const matches = [
 ];
 
 let currentMatchIndex = 0;
-let timerInterval;
+let currentStreamIndex = 0;
 
-const streamSelect = document.getElementById("streamSelect");
-const playerFrame = document.getElementById("playerFrame");
-const warning = document.getElementById("warning");
-const timerDisplay = document.getElementById("timer");
-const matchTabs = document.getElementById("matchTabs");
+const matchTabs = document.getElementById('matchTabs');
+const streamSelect = document.getElementById('streamSelect');
+const playerFrame = document.getElementById('playerFrame');
+const timerEl = document.getElementById('timer');
 
-function updateStreams() {
-  const match = matches[currentMatchIndex];
-  streamSelect.innerHTML = "";
-  match.streams.forEach((stream, i) => {
-    const option = document.createElement("option");
-    option.value = stream;
-    option.textContent = `Stream ${i+1}`;
-    streamSelect.appendChild(option);
-  });
-  loadStream(match.streams[0], true);
-}
-
-function loadStream(url, firstStream = false) {
-  playerFrame.src = url;
-  warning.style.display = firstStream ? 'block' : 'none';
-}
-
-streamSelect.addEventListener("change", () => {
-  const match = matches[currentMatchIndex];
-  const firstStream = streamSelect.value === match.streams[0];
-  loadStream(streamSelect.value, firstStream);
+// Initialize tabs
+matches.forEach((match, index) => {
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.textContent = match.name;
+  tab.onclick = () => selectMatch(index);
+  matchTabs.appendChild(tab);
 });
 
-function setupTabs() {
-  matchTabs.innerHTML = "";
-  matches.forEach((match, index) => {
-    const tab = document.createElement("div");
-    tab.className = "tab" + (index === 0 ? " active" : "");
-    tab.textContent = match.name;
-    tab.addEventListener("click", () => switchMatch(index));
-    matchTabs.appendChild(tab);
-  });
-}
-
-function switchMatch(index) {
+// Select match
+function selectMatch(index) {
   currentMatchIndex = index;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', i === index);
+  currentStreamIndex = 0;
+
+  document.querySelectorAll('.tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
   });
-  updateStreams();
-  clearInterval(timerInterval);
-  startMatchTimer();
+
+  updateStreamOptions();
+  loadStream();
 }
 
-// MATCH TIMER LOGIC
-function startMatchTimer() {
+// Update stream dropdown
+function updateStreamOptions() {
+  streamSelect.innerHTML = '';
+  matches[currentMatchIndex].streams.forEach((stream, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = `Stream ${index + 1}`;
+    streamSelect.appendChild(option);
+  });
+  streamSelect.onchange = () => {
+    currentStreamIndex = parseInt(streamSelect.value);
+    loadStream();
+  };
+}
+
+// Load stream
+function loadStream() {
   const match = matches[currentMatchIndex];
-  const startTime = new Date(match.startTime);
+  playerFrame.src = match.streams[currentStreamIndex];
+}
+
+// Timer update
+function updateTimer() {
+  const match = matches[currentMatchIndex];
+  const start = new Date(match.startTime);
   const now = new Date();
-
-  timerInterval = setInterval(() => {
-    const currentTime = new Date();
-    let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
-
-    if (elapsed < 0) elapsed = 60; // countdown until match starts
-    let displayText = "";
-
-    // Game phases
-    if (elapsed < 45 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed)} (1st Half)`;
-    } else if (elapsed < 45 * 60 + 5 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time)`;
-    } else if (elapsed < 60 * 60) {
-      displayText = `Halftime Break: ${formatTime(elapsed - 50*60)}`;
-    } else if (elapsed < 105 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half)`;
-    } else if (elapsed < 110 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time)`;
-    } else {
-      displayText = "Full Time";
-      clearInterval(timerInterval);
-    }
-
-    timerDisplay.textContent = displayText;
-  }, 1000);
+  let diff = Math.max(0, Math.floor((now - start) / 1000));
+  const minutes = String(Math.floor(diff / 60)).padStart(2, '0');
+  const seconds = String(diff % 60).padStart(2, '0');
+  timerEl.textContent = `Match Timer: ${minutes}:${seconds}`;
 }
 
-function formatTime(seconds) {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
+setInterval(updateTimer, 1000);
 
-// Initialize
-setupTabs();
-updateStreams();
-startMatchTimer();
+// Initialize first match
+selectMatch(0);
 </script>
 
 </body>
