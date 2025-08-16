@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra Stream Dashboard with Timer</title>
+<title>Ultra Stream Dashboard</title>
 <style>
   body {
     margin: 0;
@@ -24,15 +24,18 @@
     flex-wrap: wrap;
   }
 
-  header h1 { margin: 0; font-size: 1.3rem; }
+  header h1 { 
+    margin: 0; 
+    font-size: 1.3rem; 
+  }
 
-  .tabs {
+  .nav-tabs {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
   }
 
-  .tab {
+  .nav-tab {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -40,7 +43,9 @@
     transition: background 0.3s;
   }
 
-  .tab.active { background: #ff6600; }
+  .nav-tab.active { 
+    background: #ff6600; 
+  }
 
   select {
     padding: 5px 10px;
@@ -60,7 +65,9 @@
     font-size: 0.9rem;
   }
 
-  #statusBar .warning { color: #ffcc00; }
+  #statusBar .warning { 
+    color: #ffcc00; 
+  }
 
   #playerContainer {
     flex: 1;
@@ -77,14 +84,62 @@
     font-weight: bold;
     font-size: 1.1rem;
   }
+
+  .page {
+    display: none;
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  .schedule-grid {
+    display: grid;
+    gap: 15px;
+  }
+
+  .schedule-item {
+    background: #1f1f1f;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .schedule-item:hover {
+    background: #2a2a2a;
+  }
+
+  .stream-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .stream-item {
+    padding: 10px;
+    background: #2a2a2a;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .stream-item:hover {
+    background: #3a3a3a;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Football Live</h1>
-  <div class="tabs" id="matchTabs"></div>
-  <select id="streamSelect"></select>
+  <div class="nav-tabs" id="navTabs">
+    <div class="nav-tab active" data-page="schedule">Schedule</div>
+    <div class="nav-tab" data-page="streams">Streams</div>
+    <div class="nav-tab" data-page="match">Match</div>
+  </div>
 </header>
 
 <div id="statusBar">
@@ -92,8 +147,19 @@
   <div id="timer">Match Timer: 00:00</div>
 </div>
 
-<div id="playerContainer">
-  <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
+<div id="schedule" class="page active">
+  <div class="schedule-grid" id="scheduleGrid"></div>
+</div>
+
+<div id="streams" class="page">
+  <h2 id="streamMatchTitle"></h2>
+  <div class="stream-list" id="streamList"></div>
+</div>
+
+<div id="match" class="page">
+  <div id="playerContainer">
+    <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
+  </div>
 </div>
   
 <script>
@@ -107,9 +173,9 @@ const matches = [
       "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/2",
       "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/3",
       "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/4",
-     "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/5",
-     "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/6",
-     "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/7"
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/5",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/6",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/7"
     ],
     startTime: new Date("2025-08-16T17:39:00")
   },
@@ -226,47 +292,76 @@ const matches = [
 
 let currentMatchIndex = 0;
 let currentStreamIndex = 0;
+let currentPage = 'schedule';
+let timerInterval = null;
 
-const matchTabs = document.getElementById('matchTabs');
-const streamSelect = document.getElementById('streamSelect');
+const navTabs = document.getElementById('navTabs');
+const scheduleGrid = document.getElementById('scheduleGrid');
+const streamMatchTitle = document.getElementById('streamMatchTitle');
+const streamList = document.getElementById('streamList');
 const playerFrame = document.getElementById('playerFrame');
 const timerEl = document.getElementById('timer');
 
-// Initialize tabs
-matches.forEach((match, index) => {
-  const tab = document.createElement('div');
-  tab.className = 'tab';
-  tab.textContent = match.name;
-  tab.onclick = () => selectMatch(index);
-  matchTabs.appendChild(tab);
+// Page navigation
+navTabs.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    currentPage = tab.dataset.page;
+    updatePage();
+  });
 });
 
-// Select match
-function selectMatch(index) {
-  currentMatchIndex = index;
-  currentStreamIndex = 0;
-
-  document.querySelectorAll('.tab').forEach((tab, i) => {
-    tab.classList.toggle('active', i === index);
+function updatePage() {
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.toggle('active', page.id === currentPage);
+  });
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.page === currentPage);
   });
 
-  updateStreamOptions();
-  loadStream();
+  if (currentPage === 'schedule') {
+    renderSchedule();
+  } else if (currentPage === 'streams') {
+    renderStreams();
+  } else if (currentPage === 'match') {
+    loadStream();
+    startMatchTimer();
+  }
 }
 
-// Update stream dropdown
-function updateStreamOptions() {
-  streamSelect.innerHTML = '';
-  matches[currentMatchIndex].streams.forEach((stream, index) => {
-    const option = document.createElement('option');
-    option.value = index;
-    option.textContent = `Stream ${index + 1}`;
-    streamSelect.appendChild(option);
+// Render schedule page
+function renderSchedule() {
+  scheduleGrid.innerHTML = '';
+  matches.forEach((match, index) => {
+    const item = document.createElement('div');
+    item.className = 'schedule-item';
+    item.innerHTML = `
+      <strong>${match.name}</strong><br>
+      Start: ${match.startTime.toLocaleString()}
+    `;
+    item.onclick = () => {
+      currentMatchIndex = index;
+      currentPage = 'streams';
+      updatePage();
+    };
+    scheduleGrid.appendChild(item);
   });
-  streamSelect.onchange = () => {
-    currentStreamIndex = parseInt(streamSelect.value);
-    loadStream();
-  };
+}
+
+// Render streams page
+function renderStreams() {
+  streamMatchTitle.textContent = matches[currentMatchIndex].name;
+  streamList.innerHTML = '';
+  matches[currentMatchIndex].streams.forEach((stream, index) => {
+    const item = document.createElement('div');
+    item.className = 'stream-item';
+    item.textContent = `Stream ${index + 1}`;
+    item.onclick = () => {
+      currentStreamIndex = index;
+      currentPage = 'match';
+      updatePage();
+    };
+    streamList.appendChild(item);
+  });
 }
 
 // Load stream
@@ -277,6 +372,8 @@ function loadStream() {
 
 // MATCH TIMER LOGIC
 function startMatchTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+
   const match = matches[currentMatchIndex];
   const startTime = new Date(match.startTime);
   const now = new Date();
@@ -285,26 +382,26 @@ function startMatchTimer() {
     const currentTime = new Date();
     let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
 
-    if (elapsed < 0) elapsed = 60; // countdown until match starts
     let displayText = "";
-
-    // Game phases
-    if (elapsed < 45 * 60) {
+    if (elapsed < 0) {
+      // Countdown until match starts
+      displayText = `Match Starts In: ${formatTime(Math.abs(elapsed))}`;
+    } else if (elapsed < 45 * 60) {
       displayText = `Match Timer: ${formatTime(elapsed)} (1st Half)`;
-    } else if (elapsed < 45 * 60 + 5 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 45*60)} (1st Half Added Time)`;
+    } else if (elapsed < 50 * 60) {
+      displayText = `Match Timer: ${formatTime(elapsed - 45 * 60)} (1st Half Added Time)`;
     } else if (elapsed < 60 * 60) {
-      displayText = `Halftime Break: ${formatTime(elapsed - 50*60)}`;
+      displayText = `Halftime: ${formatTime(elapsed - 50 * 60)}`;
     } else if (elapsed < 105 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 60*60 + 45*60)} (2nd Half)`;
+      displayText = `Match Timer: ${formatTime(elapsed - 60 * 60 + 45 * 60)} (2nd Half)`;
     } else if (elapsed < 110 * 60) {
-      displayText = `Match Timer: ${formatTime(elapsed - 105*60)} (2nd Half Added Time)`;
+      displayText = `Match Timer: ${formatTime(elapsed - 105 * 60)} (2nd Half Added Time)`;
     } else {
       displayText = "Full Time";
       clearInterval(timerInterval);
     }
 
-    timerDisplay.textContent = displayText;
+    timerEl.textContent = displayText;
   }, 1000);
 }
 
@@ -314,8 +411,8 @@ function formatTime(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-// Initialize first match
-selectMatch(0);
+// Initialize
+updatePage();
 </script>
 
 </body>
