@@ -206,7 +206,7 @@ function startMatchTimer() {
     const currentTime = new Date();
     let elapsed = Math.floor((currentTime - startTime) / 1000); // seconds
 
-    if (elapsed < 0) elapsed = 0; // countdown until match starts
+    if (elapsed < 0) elapsed = 60; // countdown until match starts
     let displayText = "";
 
     // Game phases
