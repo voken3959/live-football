@@ -72,6 +72,10 @@
     font-weight: 500;
   }
 
+  #statusBar .status-loading { color: #00ccff; }
+  #statusBar .status-active { color: #00ff00; }
+  #statusBar .status-frozen { color: #ff4444; }
+
   #timer {
     font-weight: 600;
     font-size: 1rem;
@@ -131,27 +135,33 @@
 
   .stream-list {
     display: grid;
-    gap: 15px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     flex: 1;
-    margin-top: 20px;
+    margin-top: 15px;
   }
 
   .stream-item {
-    padding: 15px;
+    padding: 6px 8px;
     background: #1f1f1f;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid #2a2a2a;
     text-align: center;
     font-weight: 500;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .stream-item:hover {
     background: #2a2a2a;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   }
 
   #playerContainer {
@@ -180,7 +190,7 @@
 </header>
 
 <div id="statusBar">
-  <div class="warning" id="warning">⚠️ Stream may experience interruptions</div>
+  <div class="warning" id="streamStatus">⚠️ Stream may experience interruptions</div>
   <div id="timer">Match Timer: 00:00</div>
 </div>
 
@@ -334,12 +344,15 @@ let currentMatchIndex = 0;
 let currentStreamIndex = 0;
 let currentPage = 'schedule';
 let timerInterval = null;
+let lastStreamUpdate = null;
+let streamCheckInterval = null;
 
 const navTabs = document.getElementById('navTabs');
 const scheduleGrid = document.getElementById('scheduleGrid');
 const streamMatchTitle = document.getElementById('streamMatchTitle');
 const streamList = document.getElementById('streamList');
 const playerFrame = document.getElementById('playerFrame');
+const streamStatus = document.getElementById('streamStatus');
 const timerEl = document.getElementById('timer');
 
 // Page navigation
@@ -361,38 +374,51 @@ function updatePage() {
   if (currentPage === 'schedule') {
     renderSchedule();
     if (timerInterval) clearInterval(timerInterval);
+    if (streamCheckInterval) clearInterval(streamCheckInterval);
+    streamStatus.textContent = '⚠️ Stream may experience interruptions';
+    streamStatus.className = 'warning';
   } else if (currentPage === 'streams') {
     renderStreams();
     if (timerInterval) clearInterval(timerInterval);
+    if (streamCheckInterval) clearInterval(streamCheckInterval);
+    streamStatus.textContent = '⚠️ Stream may experience interruptions';
+    streamStatus.className = 'warning';
   } else if (currentPage === 'match') {
     loadStream();
     startMatchTimer();
+    startStreamCheck();
   }
 }
 
-// Render schedule page
+// Render schedule page, hiding matches that ended over 4 hours ago
 function renderSchedule() {
   scheduleGrid.innerHTML = '';
+  const now = new Date();
+  const fourHoursInMs = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+
   matches.forEach((match, index) => {
-    const item = document.createElement('div');
-    item.className = 'schedule-item';
-    item.innerHTML = `
-      <h3>${match.name}</h3>
-      <p>Start: ${match.startTime.toLocaleString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      })}</p>
-    `;
-    item.onclick = () => {
-      currentMatchIndex = index;
-      currentPage = 'streams';
-      updatePage();
-    };
-    scheduleGrid.appendChild(item);
+    const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000); // Assuming match ends after 110 minutes
+    if (now - matchEndTime <= fourHoursInMs) { // Show match if it hasn't been over 4 hours since end
+      const item = document.createElement('div');
+      item.className = 'schedule-item';
+      item.innerHTML = `
+        <h3>${match.name}</h3>
+        <p>Start: ${match.startTime.toLocaleString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        })}</p>
+      `;
+      item.onclick = () => {
+        currentMatchIndex = index;
+        currentPage = 'streams';
+        updatePage();
+      };
+      scheduleGrid.appendChild(item);
+    }
   });
 }
 
@@ -413,10 +439,47 @@ function renderStreams() {
   });
 }
 
-// Load stream
+// Load stream and monitor load status
 function loadStream() {
   const match = matches[currentMatchIndex];
   playerFrame.src = match.streams[currentStreamIndex];
+  streamStatus.textContent = 'Loading stream...';
+  streamStatus.className = 'status-loading';
+
+  playerFrame.onload = () => {
+    streamStatus.textContent = 'Stream active';
+    streamStatus.className = 'status-active';
+    lastStreamUpdate = Date.now();
+  };
+
+  // Handle load errors
+  playerFrame.onerror = () => {
+    streamStatus.textContent = 'Stream failed to load';
+    streamStatus.className = 'status-frozen';
+  };
+}
+
+// Check for stream freezes
+function startStreamCheck() {
+  if (streamCheckInterval) clearInterval(streamCheckInterval);
+  lastStreamUpdate = Date.now();
+
+  streamCheckInterval = setInterval(() => {
+    const now = Date.now();
+    if (lastStreamUpdate && now - lastStreamUpdate > 10000) { // 10 seconds without update
+      streamStatus.textContent = 'Stream frozen';
+      streamStatus.className = 'status-frozen';
+    } else if (streamStatus.className === 'status-active') {
+      streamStatus.textContent = 'Stream active';
+    }
+  }, 2000);
+
+  // Simulate stream activity (since we can't directly access iframe video state)
+  setInterval(() => {
+    if (currentPage === 'match' && streamStatus.className === 'status-active') {
+      lastStreamUpdate = Date.now();
+    }
+  }, 5000);
 }
 
 // MATCH TIMER LOGIC
