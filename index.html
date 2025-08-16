@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Match Streams</title>
+<title>Ultra Stream Dashboard</title>
 <style>
   body {
     margin: 0;
@@ -21,9 +21,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
   }
 
-  header h1 { margin: 0; font-size: 1.2rem; }
+  header h1 { margin: 0; font-size: 1.3rem; }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+  }
+
+  .tab {
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #2a2a2a;
+    transition: background 0.3s;
+  }
+
+  .tab.active { background: #ff6600; }
 
   select {
     padding: 5px 10px;
@@ -64,12 +80,18 @@
     margin-left: 10px;
     display: inline-block;
   }
+
+  /* Animation for smooth latency change */
+  .latency, #connectionIndicator {
+    transition: all 0.3s ease;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Match Stream Dashboard</h1>
+  <h1>Ultra Stream Dashboard</h1>
+  <div class="tabs" id="matchTabs"></div>
   <select id="streamSelect"></select>
 </header>
 
@@ -81,7 +103,6 @@
 <div id="playerContainer">
   <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
 </div>
-
 
 <script>
 const matches = [
@@ -119,29 +140,33 @@ const matches = [
 ];
 
 let currentMatchIndex = 0;
+let latency = 0;
+let latencyInterval;
+
 const streamSelect = document.getElementById("streamSelect");
 const playerFrame = document.getElementById("playerFrame");
 const warning = document.getElementById("warning");
 const latencyDisplay = document.getElementById("latency");
 const connectionIndicator = document.getElementById("connectionIndicator");
-let latency = 0;
-let latencyInterval;
+const matchTabs = document.getElementById("matchTabs");
 
 function startLatencyTimer() {
   clearInterval(latencyInterval);
   latency = 0;
+  updateLatencyDisplay();
+  latencyInterval = setInterval(() => {
+    latency++;
+    updateLatencyDisplay();
+  }, 1000);
+}
+
+function updateLatencyDisplay() {
   latencyDisplay.textContent = `Latency: ${latency}s `;
   latencyDisplay.appendChild(connectionIndicator);
 
-  latencyInterval = setInterval(() => {
-    latency++;
-    latencyDisplay.textContent = `Latency: ${latency}s `;
-    latencyDisplay.appendChild(connectionIndicator);
-    // Simulate connection quality
-    if(latency < 5) connectionIndicator.style.background = 'green';
-    else if(latency < 10) connectionIndicator.style.background = 'yellow';
-    else connectionIndicator.style.background = 'red';
-  }, 1000);
+  if(latency < 5) connectionIndicator.style.background = 'green';
+  else if(latency < 10) connectionIndicator.style.background = 'yellow';
+  else connectionIndicator.style.background = 'red';
 }
 
 function updateStreams() {
@@ -154,18 +179,42 @@ function updateStreams() {
     streamSelect.appendChild(option);
   });
 
-  playerFrame.src = match.streams[0];
-  warning.style.display = 'block';
+  loadStream(match.streams[0], true);
+}
+
+function loadStream(url, firstStream = false) {
+  playerFrame.src = url;
+  warning.style.display = firstStream ? 'block' : 'none';
   startLatencyTimer();
 }
 
 streamSelect.addEventListener("change", () => {
   const match = matches[currentMatchIndex];
-  playerFrame.src = streamSelect.value;
-  warning.style.display = streamSelect.value === match.streams[0] ? 'block' : 'none';
-  startLatencyTimer();
+  const firstStream = streamSelect.value === match.streams[0];
+  loadStream(streamSelect.value, firstStream);
 });
 
+function setupTabs() {
+  matchTabs.innerHTML = "";
+  matches.forEach((match, index) => {
+    const tab = document.createElement("div");
+    tab.className = "tab" + (index === 0 ? " active" : "");
+    tab.textContent = match.name;
+    tab.addEventListener("click", () => switchMatch(index));
+    matchTabs.appendChild(tab);
+  });
+}
+
+function switchMatch(index) {
+  currentMatchIndex = index;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === index);
+  });
+  updateStreams();
+}
+
+// Initialize dashboard
+setupTabs();
 updateStreams();
 </script>
 
