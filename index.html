@@ -57,31 +57,46 @@
 
   <!-- Just paste your iframe inside a div.tabcontent -->
   <div id="matches">
-    <div class="tabcontent active" data-title="Match 1">
-      <iframe src="https://embedsports.top/embed/alpha/tottenham-hotspur-vs-burnley/1" allowfullscreen></iframe>
+    <div class="tabcontent active">
+      <iframe 
+        title="Tottenham Hotspur vs Burnley"
+        src="https://embedsports.top/embed/alpha/tottenham-hotspur-vs-burnley/2" 
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <div class="tabcontent" data-title="Match 2">
-      <iframe src="https://embedsports.top/embed/alpha/sunderland-vs-west-ham-united/1" allowfullscreen></iframe>
+    <div class="tabcontent">
+      <iframe 
+        title="Sunderland VS West Ham"
+        src="https://embedsports.top/embed/alpha/sunderland-vs-west-ham-united/1" 
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <!-- 🔥 Add new games like this -->
+    <!-- 🔥 Add new games just by pasting iframes like this -->
     <!--
-    <div class="tabcontent" data-title="Match 3">
-      <iframe src="YOUR_NEW_EMBED_URL" allowfullscreen></iframe>
+    <div class="tabcontent">
+      <iframe 
+        title="Man City vs Liverpool"
+        src="YOUR_NEW_EMBED_URL" 
+        allowfullscreen>
+      </iframe>
     </div>
     -->
   </div>
 
   <script>
-    // Build tab buttons automatically from your divs
+    // Build tab buttons automatically from iframe titles
     const tabs = document.getElementById("tabs");
     const contents = document.querySelectorAll(".tabcontent");
 
     contents.forEach((content, index) => {
-      const title = content.dataset.title || `Match ${index+1}`;
+      const iframe = content.querySelector("iframe");
+      const title = iframe.getAttribute("title") || `Match ${index+1}`;
+
       const button = document.createElement("button");
       button.textContent = title;
+
       if (content.classList.contains("active")) button.classList.add("active");
 
       button.addEventListener("click", () => {
