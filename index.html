@@ -623,59 +623,64 @@
 </div>
 
 <script>
-let matches = [
-  {
-    name: "Wolves VS Man City",
-    streams: [
-      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
-      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
-    ],
-    startTime: new Date("2025-08-16T17:30:00")
-  },
-  {
-    name: "Monaco VS Le Havre AC",
-    streams: [
-      "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
-      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
-    ],
-    startTime: new Date("2025-08-16T18:00:00")
-  },
-  {
-    name: "Rangers VS Alloa Athletic",
-    streams: [
-      "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
-      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
-    ],
-    startTime: new Date("2025-08-16T17:45:00")
-  },
-  {
-    name: "Mallorca VS Barcelona",
-    streams: [
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
-    ],
-    startTime: new Date("2025-08-16T18:30:00")
-  },
-  {
-    name: "Stuttgart vs Bayern Munich",
-    streams: [
-      "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
-      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
-    ],
-    startTime: new Date("2025-08-17T12:00:00")
-  },
-  {
-    name: "Inter Milan vs Olympiacos",
-    streams: [
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
-    ],
-    startTime: new Date("2025-08-17T14:00:00")
-  }
-];
+let matches = [];
 
-// Convert startTime to Date objects
+// Load default matches only if none exist
+if (matches.length === 0) {
+  matches = [
+    {
+      name: "Wolves VS Man City",
+      streams: [
+        "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
+        "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
+        "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
+      ],
+      startTime: new Date("2025-08-16T17:30:00")
+    },
+    {
+      name: "Monaco VS Le Havre AC",
+      streams: [
+        "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
+        "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
+      ],
+      startTime: new Date("2025-08-16T18:00:00")
+    },
+    {
+      name: "Rangers VS Alloa Athletic",
+      streams: [
+        "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
+        "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
+      ],
+      startTime: new Date("2025-08-16T17:45:00")
+    },
+    {
+      name: "Mallorca VS Barcelona",
+      streams: [
+        "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
+        "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
+      ],
+      startTime: new Date("2025-08-16T18:30:00")
+    },
+    {
+      name: "Stuttgart vs Bayern Munich",
+      streams: [
+        "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
+        "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
+      ],
+      startTime: new Date("2025-08-17T12:00:00")
+    },
+    {
+      name: "Inter Milan vs Olympiacos",
+      streams: [
+        "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
+        "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
+      ],
+      startTime: new Date("2025-08-17T14:00:00")
+    }
+  ].map(match => ({ ...match, startTime: new Date(match.startTime) }));
+}
+
+// Convert startTime to Date objects for any existing matches
 matches = matches.map(match => ({
   ...match,
   startTime: new Date(match.startTime)
@@ -911,8 +916,7 @@ function loadStream() {
     if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
   };
 
-  playerFrame.onerror = () => {
-    isStreamPlaying = false;
+      isStreamPlaying = false;
     streamStatus.textContent = 'Stream failed to load, trying another link';
     streamStatus.className = 'status-frozen';
     currentStreamIndex = (currentStreamIndex + 1) % match.streams.length;
@@ -1010,10 +1014,10 @@ function addGame() {
     renderSchedule();
     updateDropdowns();
     showMessage('Game added successfully!');
-      } else {
-      showMessage('Please fill all fields!', true);
-    }
+  } else {
+    showMessage('Please fill all fields!', true);
   }
+}
 
 function editGame() {
   const index = adminEdit.value;
@@ -1047,7 +1051,7 @@ function removeGame() {
 }
 
 function resetGames() {
-  if (confirm('Are you sure you want to reset all games?')) {
+  if (confirm('Are you sure you want to reset all games? This will remove your custom games!')) {
     matches = [
       {
         name: "Wolves VS Man City",
