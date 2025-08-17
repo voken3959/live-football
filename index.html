@@ -15,7 +15,6 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
   header {
     padding: 20px 40px;
     background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
@@ -27,7 +26,6 @@
     top: 0;
     z-index: 1500;
   }
-
   header h1 {
     margin: 0;
     font-size: 2rem;
@@ -35,12 +33,10 @@
     color: #ff9900;
     text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
   }
-
   .nav-tabs {
     display: flex;
     gap: 20px;
   }
-
   .nav-tab {
     padding: 10px 20px;
     border-radius: 10px;
@@ -51,19 +47,16 @@
     font-size: 1.1rem;
     color: #cccccc;
   }
-
   .nav-tab:hover {
     background: #444444;
     transform: scale(1.05);
   }
-
   .nav-tab.active {
     background: #ff9900;
     color: #fff;
     transform: scale(1.1);
     box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
-
   #statusBar {
     padding: 12px 40px;
     background: #222222;
@@ -74,50 +67,41 @@
     border-bottom: 2px solid #3a3a3a;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
-
   #statusBar .warning {
     color: #ffcc33;
     font-weight: 600;
   }
-
   #statusBar .status-loading { color: #00ccff; }
   #statusBar .status-active { color: #00ff66; }
   #statusBar .status-frozen { color: #ff6666; }
   #statusBar .status-not-playing { color: #ffcc33; }
-
   #timer {
     font-weight: 700;
     font-size: 1.2rem;
     color: #e0e0e0;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
-
   .page {
     display: none;
     flex: 1;
     overflow-y: auto;
     animation: fadeIn 0.4s ease;
   }
-
   .page.active {
     display: flex;
     flex-direction: column;
   }
-
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   #schedule.active, #streams.active {
     padding: 30px 40px;
   }
-
   #match.active {
     padding: 0;
     height: 100vh;
   }
-
   #playerContainer {
     position: relative;
     width: 100%;
@@ -125,7 +109,6 @@
     display: flex;
     flex: 1;
   }
-
   #playerContainer::after {
     content: '';
     position: absolute;
@@ -138,7 +121,6 @@
     pointer-events: none;
     z-index: 1;
   }
-
   iframe {
     width: 100%;
     height: 100%;
@@ -148,14 +130,12 @@
     left: 0;
     z-index: 0;
   }
-
   .schedule-grid {
     display: grid;
     gap: 25px;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     padding: 25px 0;
   }
-
   .schedule-item {
     background: linear-gradient(135deg, #252525, #333333);
     padding: 25px;
@@ -166,19 +146,16 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
     overflow: hidden;
   }
-
   .schedule-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
     background: linear-gradient(135deg, #2e2e2e, #3c3c3c);
   }
-
   .match-details {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-
   .match-details h3 {
     margin: 0;
     font-size: 1.5rem;
@@ -186,22 +163,18 @@
     text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
     transition: color 0.3s ease;
   }
-
   .schedule-item:hover h3 {
     color: #ffb366;
   }
-
   .match-details p {
     margin: 5px 0;
     font-size: 1rem;
     color: #bbbbbb;
     transition: color 0.3s ease;
   }
-
   .schedule-item:hover p {
     color: #d0d0d0;
   }
-
   .match-status {
     font-size: 1rem;
     font-weight: 700;
@@ -214,10 +187,8 @@
     display: inline-block;
     transition: background 0.3s ease;
   }
-
   .match-status.upcoming { background: #ffcc33; }
   .match-status.finished { background: #ff6666; }
-
   .details-btn {
     margin-top: 15px;
     padding: 10px 20px;
@@ -229,20 +200,17 @@
     transition: all 0.3s ease;
     font-weight: 600;
   }
-
   .details-btn:hover {
     background: #e07b00;
     transform: scale(1.05);
     box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
-
   #scheduleControls {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
     flex-wrap: wrap;
   }
-
   .control-btn {
     padding: 10px 20px;
     background: #333333;
@@ -253,13 +221,11 @@
     transition: all 0.3s ease;
     font-weight: 600;
   }
-
   .control-btn:hover {
     background: #444444;
     transform: scale(1.05);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
-
   #loadingSpinner {
     display: none;
     position: absolute;
@@ -273,12 +239,10 @@
     height: 60px;
     animation: spin 1.2s linear infinite;
   }
-
   @keyframes spin {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
   }
-
   .stream-list {
     display: grid;
     gap: 12px;
@@ -286,7 +250,6 @@
     flex: 1;
     margin-top: 20px;
   }
-
   .stream-item {
     padding: 12px;
     background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
@@ -302,13 +265,11 @@
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
-
   .stream-item:hover {
     background: linear-gradient(135deg, #333333, #4a4a4a);
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
   }
-
   #streamMatchTitle {
     font-size: 2rem;
     font-weight: 700;
@@ -317,7 +278,6 @@
     text-align: center;
     text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
   }
-
   #adminPanel {
     position: fixed;
     bottom: 0;
@@ -329,16 +289,13 @@
     z-index: 1000;
     transition: all 0.4s ease;
   }
-
   #adminPanel.collapsed {
     height: 60px;
     overflow: hidden;
   }
-
   #adminPanel.expanded {
     height: auto;
   }
-
   #adminToggle {
     background: #ff9900;
     border: none;
@@ -351,17 +308,14 @@
     font-weight: 600;
     box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
-
   #adminToggle:hover {
     background: #e07b00;
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
   }
-
   #adminContent.locked .admin-form {
     display: none;
   }
-
   #adminPassword {
     padding: 10px;
     font-size: 1rem;
@@ -372,19 +326,16 @@
     width: 200px;
     transition: border-color 0.3s ease;
   }
-
   #adminPassword:focus {
     border-color: #ff9900;
     outline: none;
   }
-
   .admin-form {
     display: flex;
     gap: 15px;
     margin-top: 15px;
     flex-wrap: wrap;
   }
-
   .admin-input, .admin-datetime {
     padding: 10px;
     font-size: 1rem;
@@ -396,12 +347,10 @@
     min-width: 180px;
     transition: border-color 0.3s ease;
   }
-
   .admin-input:focus, .admin-datetime:focus {
     border-color: #ff9900;
     outline: none;
   }
-
   .admin-select {
     padding: 10px;
     font-size: 1rem;
@@ -412,12 +361,10 @@
     min-width: 220px;
     transition: border-color 0.3s ease;
   }
-
   .admin-select:focus {
     border-color: #ff9900;
     outline: none;
   }
-
   .admin-button {
     padding: 10px 20px;
     font-size: 1rem;
@@ -431,20 +378,17 @@
     font-weight: 600;
     box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
-
   .admin-button:hover {
     background: #e07b00;
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
   }
-
   #adminStatus {
     font-size: 1rem;
     color: #bbbbbb;
     margin-top: 15px;
     font-weight: 600;
   }
-
   #adminMessage {
     font-size: 1rem;
     color: #00ff66;
@@ -452,11 +396,9 @@
     display: none;
     font-weight: 600;
   }
-
   #adminMessage.error {
     color: #ff6666;
   }
-
   @media (max-width: 768px) {
     header {
       padding: 15px 20px;
@@ -482,9 +424,10 @@
     }
   }
 </style>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js"></script>
 </head>
 <body>
-
 <header>
   <h1>Football Live Streams</h1>
   <div class="nav-tabs" id="navTabs">
@@ -493,12 +436,10 @@
     <div class="nav-tab" data-page="match">Match</div>
   </div>
 </header>
-
 <div id="statusBar">
   <div class="warning" id="streamStatus">⚠️ Stream may experience interruptions</div>
   <div id="timer">Match Timer: 00:00</div>
 </div>
-
 <div id="schedule" class="page active">
   <div id="scheduleControls">
     <button class="control-btn" onclick="sortByTime()">Sort by Time</button>
@@ -508,18 +449,15 @@
   </div>
   <div class="schedule-grid" id="scheduleGrid"></div>
 </div>
-
 <div id="streams" class="page">
   <h2 id="streamMatchTitle"></h2>
   <div class="stream-list" id="streamList"></div>
 </div>
-
 <div id="match" class="page">
   <div id="playerContainer">
     <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
   </div>
 </div>
-
 <div id="adminPanel" class="collapsed">
   <button id="adminToggle">Toggle Admin Panel</button>
   <div id="adminContent" class="locked">
@@ -547,7 +485,6 @@
     <div id="adminMessage"></div>
   </div>
 </div>
-
 <script>
 const defaultMatches = [
   {
@@ -600,17 +537,19 @@ const defaultMatches = [
     startTime: "2025-08-17T14:00:00"
   }
 ];
-
-let matches = localStorage.getItem('matches') 
-  ? JSON.parse(localStorage.getItem('matches')).map(match => ({ ...match, startTime: new Date(match.startTime) }))
-  : defaultMatches.map(match => ({ ...match, startTime: new Date(match.startTime) }));
-
-matches.sort((a, b) => a.startTime - b.startTime);
-
-function saveMatches() {
-  localStorage.setItem('matches', JSON.stringify(matches.map(match => ({ ...match, startTime: match.startTime.toISOString() }))));
-}
-
+const firebaseConfig = {
+  // REPLACE WITH YOUR OWN FIREBASE CONFIG HERE
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+let matches = [];
 let currentMatchIndex = 0;
 let currentStreamIndex = 0;
 let currentPage = 'schedule';
@@ -618,7 +557,6 @@ let timerInterval = null;
 let streamLoadTimeout = null;
 let streamCheckInterval = null;
 let isStreamPlaying = false;
-
 const navTabs = document.getElementById('navTabs');
 const scheduleGrid = document.getElementById('scheduleGrid');
 const streamMatchTitle = document.getElementById('streamMatchTitle');
@@ -637,7 +575,6 @@ const adminTime = document.getElementById('adminTime');
 const adminEdit = document.getElementById('adminEdit');
 const adminRemove = document.getElementById('adminRemove');
 const adminMessage = document.getElementById('adminMessage');
-
 // Page navigation
 navTabs.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -645,7 +582,6 @@ navTabs.querySelectorAll('.nav-tab').forEach(tab => {
     updatePage();
   });
 });
-
 function updatePage() {
   document.querySelectorAll('.page').forEach(page => {
     page.classList.toggle('active', page.id === currentPage);
@@ -653,7 +589,6 @@ function updatePage() {
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.classList.toggle('active', tab.dataset.page === currentPage);
   });
-
   if (currentPage === 'schedule') {
     renderSchedule();
     if (timerInterval) clearInterval(timerInterval);
@@ -676,13 +611,11 @@ function updatePage() {
     startStreamCheck();
   }
 }
-
 // Render schedule page with enhanced features and 120-minute finished rule
 function renderSchedule() {
   scheduleGrid.innerHTML = '';
   const now = new Date();
   const fourHoursInMs = 4 * 60 * 60 * 1000;
-
   matches.forEach((match, index) => {
     const elapsed = Math.floor((now - match.startTime) / 1000);
     let status = 'finished';
@@ -694,7 +627,6 @@ function renderSchedule() {
       status = 'live';
       timeText = `Live for ${formatTime(elapsed)}`;
     }
-
     const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
     if (now - matchEndTime <= fourHoursInMs) {
       const item = document.createElement('div');
@@ -716,12 +648,10 @@ function renderSchedule() {
     }
   });
 }
-
 function sortByTime() {
   matches.sort((a, b) => a.startTime - b.startTime);
   renderSchedule();
 }
-
 function filterByStatus(status) {
   const now = new Date();
   const fourHoursInMs = 4 * 60 * 60 * 1000;
@@ -752,7 +682,6 @@ function filterByStatus(status) {
     }
   });
 }
-
 function renderStreams() {
   streamMatchTitle.textContent = matches[currentMatchIndex].name;
   streamList.innerHTML = '';
@@ -768,7 +697,6 @@ function renderStreams() {
     streamList.appendChild(item);
   });
 }
-
 function loadStream() {
   const match = matches[currentMatchIndex];
   if (currentStreamIndex >= match.streams.length) {
@@ -776,12 +704,10 @@ function loadStream() {
     streamStatus.className = 'status-frozen';
     return;
   }
-
   playerFrame.src = match.streams[currentStreamIndex];
   streamStatus.textContent = 'Loading stream...';
   streamStatus.className = 'status-loading';
   isStreamPlaying = false;
-
   if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
   streamLoadTimeout = setTimeout(() => {
     if (!isStreamPlaying) {
@@ -791,14 +717,12 @@ function loadStream() {
       loadStream();
     }
   }, 5000);
-
   playerFrame.onload = () => {
     isStreamPlaying = true;
     streamStatus.textContent = 'Stream active';
     streamStatus.className = 'status-active';
     if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
   };
-
   playerFrame.onerror = () => {
     isStreamPlaying = false;
     streamStatus.textContent = 'Stream failed to load, trying another link';
@@ -807,10 +731,8 @@ function loadStream() {
     loadStream();
   };
 }
-
 function startStreamCheck() {
   if (streamCheckInterval) clearInterval(streamCheckInterval);
-
   streamCheckInterval = setInterval(() => {
     if (currentPage !== 'match') return;
     if (isStreamPlaying) {
@@ -822,18 +744,14 @@ function startStreamCheck() {
     }
   }, 2000);
 }
-
 function startMatchTimer() {
   if (timerInterval) clearInterval(timerInterval);
-
   const match = matches[currentMatchIndex];
   const startTime = new Date(match.startTime);
   const now = new Date();
-
   timerInterval = setInterval(() => {
     const currentTime = new Date();
     let elapsed = Math.floor((currentTime - startTime) / 1000);
-
     let displayText = "";
     if (elapsed < 0) {
       displayText = `Match Starts In: ${formatTime(Math.abs(elapsed))}`;
@@ -851,17 +769,14 @@ function startMatchTimer() {
       displayText = "Full Time";
       clearInterval(timerInterval);
     }
-
     timerEl.textContent = displayText;
   }, 1000);
 }
-
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
-
 adminToggle.addEventListener('click', () => {
   adminPanel.classList.toggle('collapsed');
   adminPanel.classList.toggle('expanded');
@@ -871,7 +786,6 @@ adminToggle.addEventListener('click', () => {
     adminToggle.textContent = 'Toggle Admin Panel';
   }
 });
-
 adminPassword.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     if (adminPassword.value === 'admin123') {
@@ -884,7 +798,6 @@ adminPassword.addEventListener('keypress', (e) => {
     }
   }
 });
-
 adminEdit.addEventListener('change', () => {
   const index = adminEdit.value;
   if (index !== '') {
@@ -898,7 +811,6 @@ adminEdit.addEventListener('change', () => {
     adminTime.value = '';
   }
 });
-
 function addGame() {
   const title = adminTitle.value.trim();
   const streamsInput = adminStreams.value.trim();
@@ -910,14 +822,11 @@ function addGame() {
     adminTitle.value = '';
     adminStreams.value = '';
     adminTime.value = '';
-    renderSchedule();
-    updateDropdowns();
     showMessage('Game added successfully!');
   } else {
     showMessage('Please fill all fields!', true);
   }
 }
-
 function editGame() {
   const index = adminEdit.value;
   if (index !== '') {
@@ -931,8 +840,6 @@ function editGame() {
       adminTitle.value = '';
       adminStreams.value = '';
       adminTime.value = '';
-      renderSchedule();
-      updateDropdowns();
       showMessage('Game updated successfully!');
     } else {
       showMessage('Please fill all fields!', true);
@@ -941,30 +848,23 @@ function editGame() {
     showMessage('Please select a game to edit!', true);
   }
 }
-
 function removeGame() {
   const index = adminRemove.value;
   if (index !== '') {
     matches.splice(index, 1);
     saveMatches();
-    renderSchedule();
-    updateDropdowns();
     showMessage('Game removed successfully!');
   } else {
     showMessage('Please select a game to remove!', true);
   }
 }
-
 function resetGames() {
   if (confirm('Are you sure you want to reset all games? This will remove your custom games!')) {
     matches = defaultMatches.map(match => ({ ...match, startTime: new Date(match.startTime) }));
     saveMatches();
-    renderSchedule();
-    updateDropdowns();
     showMessage('Games reset successfully!');
   }
 }
-
 function updateDropdowns() {
   [adminEdit, adminRemove].forEach(select => {
     select.innerHTML = '<option value="">Select Game</option>';
@@ -976,7 +876,6 @@ function updateDropdowns() {
     });
   });
 }
-
 function showMessage(text, isError = false) {
   adminMessage.textContent = text;
   adminMessage.className = isError ? 'error' : '';
@@ -985,13 +884,29 @@ function showMessage(text, isError = false) {
     adminMessage.style.display = 'none';
   }, 3000);
 }
-
+function loadMatches() {
+  const matchesRef = database.ref('matches');
+  matchesRef.on('value', (snapshot) => {
+    let data = snapshot.val();
+    if (!data) {
+      data = defaultMatches.map(match => ({ ...match, startTime: match.startTime }));
+      saveMatches();
+    } else {
+      data = data.map(match => ({ ...match, startTime: match.startTime }));
+    }
+    matches = data.map(match => ({ ...match, startTime: new Date(match.startTime) }));
+    matches.sort((a, b) => a.startTime - b.startTime);
+    renderSchedule();
+    updateDropdowns();
+  });
+}
+function saveMatches() {
+  database.ref('matches').set(matches.map(match => ({ ...match, startTime: match.startTime.toISOString() })));
+}
 // Initialize
 adminTime.value = new Date().toISOString().slice(0, 16);
-renderSchedule();
+loadMatches();
 updatePage();
-updateDropdowns();
-
 // Auto-refresh schedule
 setInterval(renderSchedule, 60000);
 </script>
