@@ -260,70 +260,6 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-  }
-
-  .modal-content {
-    background: linear-gradient(135deg, #252525, #2e2e2e);
-    padding: 25px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    position: relative;
-    overflow-y: auto;
-    max-height: 80vh;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #ff6666;
-    border: none;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .modal-close:hover {
-    background: #cc0000;
-    transform: rotate(90deg);
-  }
-
-  #modalTitle {
-    margin: 0 0 15px;
-    font-size: 1.8rem;
-    color: #ff9900;
-    text-align: center;
-  }
-
-  #modalTime, #modalStreams li {
-    font-size: 1.1rem;
-    color: #cccccc;
-    margin-bottom: 10px;
-  }
-
-  #modalStreams {
-    list-style: none;
-    padding: 0;
-  }
-
   #loadingSpinner {
     display: none;
     position: absolute;
@@ -570,7 +506,6 @@
     <button class="control-btn" onclick="filterByStatus('live')">Show Live</button>
     <button class="control-btn" onclick="filterByStatus('finished')">Show Finished</button>
   </div>
-  <div id="loadingSpinner"></div>
   <div class="schedule-grid" id="scheduleGrid"></div>
 </div>
 
@@ -582,15 +517,6 @@
 <div id="match" class="page">
   <div id="playerContainer">
     <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
-  </div>
-</div>
-
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close">&times;</button>
-    <h3 id="modalTitle"></h3>
-    <p id="modalTime"></p>
-    <ul id="modalStreams"></ul>
   </div>
 </div>
 
@@ -623,70 +549,67 @@
 </div>
 
 <script>
-let matches = [];
+const defaultMatches = [
+  {
+    name: "Wolves VS Man City",
+    streams: [
+      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
+      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
+    ],
+    startTime: "2025-08-16T17:30:00"
+  },
+  {
+    name: "Monaco VS Le Havre AC",
+    streams: [
+      "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
+      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
+    ],
+    startTime: "2025-08-16T18:00:00"
+  },
+  {
+    name: "Rangers VS Alloa Athletic",
+    streams: [
+      "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
+      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
+    ],
+    startTime: "2025-08-16T17:45:00"
+  },
+  {
+    name: "Mallorca VS Barcelona",
+    streams: [
+      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
+      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
+    ],
+    startTime: "2025-08-16T18:30:00"
+  },
+  {
+    name: "Stuttgart vs Bayern Munich",
+    streams: [
+      "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
+      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
+    ],
+    startTime: "2025-08-17T12:00:00"
+  },
+  {
+    name: "Inter Milan vs Olympiacos",
+    streams: [
+      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
+      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
+    ],
+    startTime: "2025-08-17T14:00:00"
+  }
+];
 
-// Load default matches only if none exist
-if (matches.length === 0) {
-  matches = [
-    {
-      name: "Wolves VS Man City",
-      streams: [
-        "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
-        "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
-        "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
-      ],
-      startTime: new Date("2025-08-16T17:30:00")
-    },
-    {
-      name: "Monaco VS Le Havre AC",
-      streams: [
-        "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
-        "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
-      ],
-      startTime: new Date("2025-08-16T18:00:00")
-    },
-    {
-      name: "Rangers VS Alloa Athletic",
-      streams: [
-        "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
-        "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
-      ],
-      startTime: new Date("2025-08-16T17:45:00")
-    },
-    {
-      name: "Mallorca VS Barcelona",
-      streams: [
-        "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
-        "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
-      ],
-      startTime: new Date("2025-08-16T18:30:00")
-    },
-    {
-      name: "Stuttgart vs Bayern Munich",
-      streams: [
-        "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
-        "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
-      ],
-      startTime: new Date("2025-08-17T12:00:00")
-    },
-    {
-      name: "Inter Milan vs Olympiacos",
-      streams: [
-        "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
-        "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
-      ],
-      startTime: new Date("2025-08-17T14:00:00")
-    }
-  ].map(match => ({ ...match, startTime: new Date(match.startTime) }));
-}
-
-// Convert startTime to Date objects for any existing matches
-matches = matches.map(match => ({
-  ...match,
-  startTime: new Date(match.startTime)
-}));
+let matches = localStorage.getItem('matches') 
+  ? JSON.parse(localStorage.getItem('matches')).map(match => ({ ...match, startTime: new Date(match.startTime) }))
+  : defaultMatches.map(match => ({ ...match, startTime: new Date(match.startTime) }));
 
 matches.sort((a, b) => a.startTime - b.startTime);
+
+function saveMatches() {
+  localStorage.setItem('matches', JSON.stringify(matches.map(match => ({ ...match, startTime: match.startTime.toISOString() }))));
+}
 
 let currentMatchIndex = 0;
 let currentStreamIndex = 0;
@@ -714,12 +637,6 @@ const adminTime = document.getElementById('adminTime');
 const adminEdit = document.getElementById('adminEdit');
 const adminRemove = document.getElementById('adminRemove');
 const adminMessage = document.getElementById('adminMessage');
-const modal = document.getElementById('modal');
-const modalClose = document.querySelector('.modal-close');
-const modalTitle = document.getElementById('modalTitle');
-const modalTime = document.getElementById('modalTime');
-const modalStreams = document.getElementById('modalStreams');
-const loadingSpinner = document.getElementById('loadingSpinner');
 
 // Page navigation
 navTabs.querySelectorAll('.nav-tab').forEach(tab => {
@@ -762,72 +679,43 @@ function updatePage() {
 
 // Render schedule page with enhanced features and 120-minute finished rule
 function renderSchedule() {
-  loadingSpinner.style.display = 'block';
   scheduleGrid.innerHTML = '';
   const now = new Date();
   const fourHoursInMs = 4 * 60 * 60 * 1000;
 
-  setTimeout(() => {
-    scheduleGrid.innerHTML = '';
-    matches.forEach((match, index) => {
-      const elapsed = Math.floor((now - match.startTime) / 1000);
-      let status = 'finished';
-      let timeText = 'Finished';
-      if (elapsed < 0) {
-        status = 'upcoming';
-        timeText = `Starts in ${formatTime(Math.abs(elapsed))}`;
-      } else if (elapsed < 120 * 60) { // 120 minutes = 7200 seconds
-        status = 'live';
-        timeText = `Live for ${formatTime(elapsed)}`;
-      }
+  matches.forEach((match, index) => {
+    const elapsed = Math.floor((now - match.startTime) / 1000);
+    let status = 'finished';
+    let timeText = 'Finished';
+    if (elapsed < 0) {
+      status = 'upcoming';
+      timeText = `Starts in ${formatTime(Math.abs(elapsed))}`;
+    } else if (elapsed < 120 * 60) { // 120 minutes = 7200 seconds
+      status = 'live';
+      timeText = `Live for ${formatTime(elapsed)}`;
+    }
 
-      const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
-      if (now - matchEndTime <= fourHoursInMs) {
-        const item = document.createElement('div');
-        item.className = 'schedule-item';
-        item.innerHTML = `
-          <div class="match-details">
-            <h3>${match.name}</h3>
-            <p>Status: <span class="match-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
-            <p>Time: ${timeText}</p>
-          </div>
-          <button class="details-btn" onclick="showDetails(${index})">Details</button>
-        `;
-        item.onclick = () => {
-          currentMatchIndex = index;
-          currentStreamIndex = 0;
-          currentPage = 'streams';
-          updatePage();
-        };
-        scheduleGrid.appendChild(item);
-      }
-    });
-    loadingSpinner.style.display = 'none';
-  }, 500);
+    const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
+    if (now - matchEndTime <= fourHoursInMs) {
+      const item = document.createElement('div');
+      item.className = 'schedule-item';
+      item.innerHTML = `
+        <div class="match-details">
+          <h3>${match.name}</h3>
+          <p>Status: <span class="match-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+          <p>Time: ${timeText}</p>
+        </div>
+      `;
+      item.onclick = () => {
+        currentMatchIndex = index;
+        currentStreamIndex = 0;
+        currentPage = 'streams';
+        updatePage();
+      };
+      scheduleGrid.appendChild(item);
+    }
+  });
 }
-
-function showDetails(index) {
-  const match = matches[index];
-  modalTitle.textContent = match.name;
-  modalTime.textContent = `Start Time: ${match.startTime.toLocaleString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  })}`;
-  modalStreams.innerHTML = match.streams.map(stream => `<li>${stream}</li>`).join('');
-  modal.style.display = 'flex';
-}
-
-modalClose.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
-
-window.addEventListener('click', (e) => {
-  if (e.target === modal) modal.style.display = 'none';
-});
 
 function sortByTime() {
   matches.sort((a, b) => a.startTime - b.startTime);
@@ -837,37 +725,32 @@ function sortByTime() {
 function filterByStatus(status) {
   const now = new Date();
   const fourHoursInMs = 4 * 60 * 60 * 1000;
-  loadingSpinner.style.display = 'block';
-  setTimeout(() => {
-    scheduleGrid.innerHTML = '';
-    matches.forEach((match, index) => {
-      const elapsed = Math.floor((now - match.startTime) / 1000);
-      let matchStatus = 'finished';
-      if (elapsed < 0) matchStatus = 'upcoming';
-      else if (elapsed < 120 * 60) matchStatus = 'live';
-      const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
-      if (now - matchEndTime <= fourHoursInMs && (status === 'all' || matchStatus === status)) {
-        const item = document.createElement('div');
-        item.className = 'schedule-item';
-        item.innerHTML = `
-          <div class="match-details">
-            <h3>${match.name}</h3>
-            <p>Status: <span class="match-status ${matchStatus}">${matchStatus.charAt(0).toUpperCase() + matchStatus.slice(1)}</span></p>
-            <p>Time: ${elapsed < 0 ? `Starts in ${formatTime(Math.abs(elapsed))}` : `Live for ${formatTime(elapsed)}`}</p>
-          </div>
-          <button class="details-btn" onclick="showDetails(${index})">Details</button>
-        `;
-        item.onclick = () => {
-          currentMatchIndex = index;
-          currentStreamIndex = 0;
-          currentPage = 'streams';
-          updatePage();
-        };
-        scheduleGrid.appendChild(item);
-      }
-    });
-    loadingSpinner.style.display = 'none';
-  }, 500);
+  scheduleGrid.innerHTML = '';
+  matches.forEach((match, index) => {
+    const elapsed = Math.floor((now - match.startTime) / 1000);
+    let matchStatus = 'finished';
+    if (elapsed < 0) matchStatus = 'upcoming';
+    else if (elapsed < 120 * 60) matchStatus = 'live';
+    const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
+    if (now - matchEndTime <= fourHoursInMs && (status === 'all' || matchStatus === status)) {
+      const item = document.createElement('div');
+      item.className = 'schedule-item';
+      item.innerHTML = `
+        <div class="match-details">
+          <h3>${match.name}</h3>
+          <p>Status: <span class="match-status ${matchStatus}">${matchStatus.charAt(0).toUpperCase() + matchStatus.slice(1)}</span></p>
+          <p>Time: ${elapsed < 0 ? `Starts in ${formatTime(Math.abs(elapsed))}` : `Live for ${formatTime(elapsed)}`}</p>
+        </div>
+      `;
+      item.onclick = () => {
+        currentMatchIndex = index;
+        currentStreamIndex = 0;
+        currentPage = 'streams';
+        updatePage();
+      };
+      scheduleGrid.appendChild(item);
+    }
+  });
 }
 
 function renderStreams() {
@@ -916,7 +799,8 @@ function loadStream() {
     if (streamLoadTimeout) clearTimeout(streamLoadTimeout);
   };
 
-      isStreamPlaying = false;
+  playerFrame.onerror = () => {
+    isStreamPlaying = false;
     streamStatus.textContent = 'Stream failed to load, trying another link';
     streamStatus.className = 'status-frozen';
     currentStreamIndex = (currentStreamIndex + 1) % match.streams.length;
@@ -1001,6 +885,20 @@ adminPassword.addEventListener('keypress', (e) => {
   }
 });
 
+adminEdit.addEventListener('change', () => {
+  const index = adminEdit.value;
+  if (index !== '') {
+    const match = matches[index];
+    adminTitle.value = match.name;
+    adminStreams.value = match.streams.join(',');
+    adminTime.value = match.startTime.toISOString().slice(0, 16);
+  } else {
+    adminTitle.value = '';
+    adminStreams.value = '';
+    adminTime.value = '';
+  }
+});
+
 function addGame() {
   const title = adminTitle.value.trim();
   const streamsInput = adminStreams.value.trim();
@@ -1008,6 +906,7 @@ function addGame() {
   if (title && streamsInput) {
     const streams = streamsInput.split(',').map(s => s.trim()).filter(s => s);
     matches.push({ name: title, streams: streams, startTime: time });
+    saveMatches();
     adminTitle.value = '';
     adminStreams.value = '';
     adminTime.value = '';
@@ -1021,13 +920,14 @@ function addGame() {
 
 function editGame() {
   const index = adminEdit.value;
-  if (index) {
+  if (index !== '') {
     const title = adminTitle.value.trim() || matches[index].name;
     const streamsInput = adminStreams.value.trim() || matches[index].streams.join(', ');
     const time = adminTime.value ? new Date(adminTime.value) : matches[index].startTime;
     if (title && streamsInput) {
       const streams = streamsInput.split(',').map(s => s.trim()).filter(s => s);
       matches[index] = { name: title, streams: streams, startTime: time };
+      saveMatches();
       adminTitle.value = '';
       adminStreams.value = '';
       adminTime.value = '';
@@ -1037,72 +937,28 @@ function editGame() {
     } else {
       showMessage('Please fill all fields!', true);
     }
+  } else {
+    showMessage('Please select a game to edit!', true);
   }
 }
 
 function removeGame() {
   const index = adminRemove.value;
-  if (index) {
+  if (index !== '') {
     matches.splice(index, 1);
+    saveMatches();
     renderSchedule();
     updateDropdowns();
     showMessage('Game removed successfully!');
+  } else {
+    showMessage('Please select a game to remove!', true);
   }
 }
 
 function resetGames() {
   if (confirm('Are you sure you want to reset all games? This will remove your custom games!')) {
-    matches = [
-      {
-        name: "Wolves VS Man City",
-        streams: [
-          "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
-          "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
-          "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
-        ],
-        startTime: new Date("2025-08-16T17:30:00")
-      },
-      {
-        name: "Monaco VS Le Havre AC",
-        streams: [
-          "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
-          "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
-        ],
-        startTime: new Date("2025-08-16T18:00:00")
-      },
-      {
-        name: "Rangers VS Alloa Athletic",
-        streams: [
-          "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
-          "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
-        ],
-        startTime: new Date("2025-08-16T17:45:00")
-      },
-      {
-        name: "Mallorca VS Barcelona",
-        streams: [
-          "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
-          "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
-        ],
-        startTime: new Date("2025-08-16T18:30:00")
-      },
-      {
-        name: "Stuttgart vs Bayern Munich",
-        streams: [
-          "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
-          "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
-        ],
-        startTime: new Date("2025-08-17T12:00:00")
-      },
-      {
-        name: "Inter Milan vs Olympiacos",
-        streams: [
-          "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
-          "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
-        ],
-        startTime: new Date("2025-08-17T14:00:00")
-      }
-    ].map(match => ({ ...match, startTime: new Date(match.startTime) }));
+    matches = defaultMatches.map(match => ({ ...match, startTime: new Date(match.startTime) }));
+    saveMatches();
     renderSchedule();
     updateDropdowns();
     showMessage('Games reset successfully!');
@@ -1134,6 +990,7 @@ function showMessage(text, isError = false) {
 adminTime.value = new Date().toISOString().slice(0, 16);
 renderSchedule();
 updatePage();
+updateDropdowns();
 
 // Auto-refresh schedule
 setInterval(renderSchedule, 60000);
