@@ -3,90 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Football Streams</title>
+<title>Football Live Streams</title>
 <style>
   body {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0a0a0a;
+    background: linear-gradient(180deg, #0f0f0f, #1a1a1a);
     color: #e0e0e0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   header {
-    padding: 15px 30px;
-    background: linear-gradient(180deg, #1a1a1a, #121212);
+    padding: 20px 40px;
+    background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 1500;
   }
 
   header h1 {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #ff8c00;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff9900;
+    text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
   }
 
   .nav-tabs {
     display: flex;
-    gap: 15px;
+    gap: 20px;
   }
 
   .nav-tab {
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    background: #2a2a2a;
+    background: #333333;
     transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #cccccc;
   }
 
   .nav-tab:hover {
-    background: #3a3a2a;
-    transform: translateY(-1px);
+    background: #444444;
+    transform: scale(1.05);
   }
 
   .nav-tab.active {
-    background: #ff8c00;
+    background: #ff9900;
     color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
 
   #statusBar {
-    padding: 10px 30px;
-    background: #151515;
+    padding: 12px 40px;
+    background: #222222;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
-    border-bottom: 1px solid #252525;
+    font-size: 1rem;
+    border-bottom: 2px solid #3a3a3a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   #statusBar .warning {
-    color: #ffcc00;
-    font-weight: 500;
+    color: #ffcc33;
+    font-weight: 600;
   }
 
   #statusBar .status-loading { color: #00ccff; }
-  #statusBar .status-active { color: #00ff00; }
-  #statusBar .status-frozen { color: #ff4444; }
-  #statusBar .status-not-playing { color: #ffcc00; }
+  #statusBar .status-active { color: #00ff66; }
+  #statusBar .status-frozen { color: #ff6666; }
+  #statusBar .status-not-playing { color: #ffcc33; }
 
   #timer {
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 1.2rem;
     color: #e0e0e0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
   .page {
     display: none;
     flex: 1;
     overflow-y: auto;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.4s ease;
   }
 
   .page.active {
@@ -95,12 +105,12 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   #schedule.active, #streams.active {
-    padding: 20px 30px;
+    padding: 30px 40px;
   }
 
   #match.active {
@@ -116,6 +126,19 @@
     flex: 1;
   }
 
+  #playerContainer::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 2px solid rgba(255, 153, 0, 0.3);
+    border-radius: 10px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
   iframe {
     width: 100%;
     height: 100%;
@@ -123,112 +146,118 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 0;
   }
 
   .schedule-grid {
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    padding: 20px 0;
+    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    padding: 25px 0;
   }
 
   .schedule-item {
-    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
-    padding: 20px;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #252525, #333333);
+    padding: 25px;
+    border-radius: 15px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid #3a3a3a;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+    border: 2px solid #444444;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
   }
 
   .schedule-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(135deg, #2e2e2e, #3c3c3c);
   }
 
-  .match-header {
+  .match-details {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
-
-  .team-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #ff4d4d; /* Placeholder for home team */
-  }
-
-  .team-logo.away {
-    background: #4d4dff; /* Placeholder for away team */
+    flex-direction: column;
+    gap: 10px;
   }
 
   .match-details h3 {
     margin: 0;
-    font-size: 1.3rem;
-    color: #ff8c00;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 1.5rem;
+    color: #ff9900;
+    text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
+    transition: color 0.3s ease;
+  }
+
+  .schedule-item:hover h3 {
+    color: #ffb366;
   }
 
   .match-details p {
     margin: 5px 0;
-    font-size: 0.9rem;
-    color: #b0b0b0;
+    font-size: 1rem;
+    color: #bbbbbb;
+    transition: color 0.3s ease;
+  }
+
+  .schedule-item:hover p {
+    color: #d0d0d0;
   }
 
   .match-status {
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 8px;
-    background: #00ff00;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 6px 15px;
+    border-radius: 10px;
+    background: #00ff66;
     color: #0a0a0a;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
+    display: inline-block;
+    transition: background 0.3s ease;
   }
 
-  .match-status.upcoming { background: #ffcc00; }
-  .match-status.finished { background: #ff4444; }
+  .match-status.upcoming { background: #ffcc33; }
+  .match-status.finished { background: #ff6666; }
 
   .details-btn {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: #ff8c00;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ff9900;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #fff;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: 600;
   }
 
   .details-btn:hover {
     background: #e07b00;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
 
   #scheduleControls {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
   }
 
   .control-btn {
-    padding: 8px 16px;
-    background: #2a2a2a;
+    padding: 10px 20px;
+    background: #333333;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #e0e0e0;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: 600;
   }
 
   .control-btn:hover {
-    background: #3a3a2a;
+    background: #444444;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   .modal {
@@ -238,37 +267,61 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     z-index: 2000;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(5px);
   }
 
   .modal-content {
-    background: #1f1f1f;
-    padding: 20px;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #252525, #2e2e2e);
+    padding: 25px;
+    border-radius: 15px;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow-y: auto;
+    max-height: 80vh;
   }
 
   .modal-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #ff4444;
+    top: 15px;
+    right: 15px;
+    background: #ff6666;
     border: none;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     color: #fff;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
   }
 
   .modal-close:hover {
     background: #cc0000;
+    transform: rotate(90deg);
+  }
+
+  #modalTitle {
+    margin: 0 0 15px;
+    font-size: 1.8rem;
+    color: #ff9900;
+    text-align: center;
+  }
+
+  #modalTime, #modalStreams li {
+    font-size: 1.1rem;
+    color: #cccccc;
+    margin-bottom: 10px;
+  }
+
+  #modalStreams {
+    list-style: none;
+    padding: 0;
   }
 
   #loadingSpinner {
@@ -277,12 +330,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 8px solid #2a2a2a;
-    border-top: 8px solid #ff8c00;
+    border: 10px solid #333333;
+    border-top: 10px solid #ff9900;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.2s linear infinite;
   }
 
   @keyframes spin {
@@ -290,20 +343,59 @@
     100% { transform: translate(-50%, -50%) rotate(360deg); }
   }
 
+  .stream-list {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    flex: 1;
+    margin-top: 20px;
+  }
+
+  .stream-item {
+    padding: 12px;
+    background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #444444;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .stream-item:hover {
+    background: linear-gradient(135deg, #333333, #4a4a4a);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  #streamMatchTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff9900;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
+  }
+
   #adminPanel {
     position: fixed;
     bottom: 0;
     width: 100%;
     background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
-    padding: 15px;
-    border-top: 1px solid #2a2a2a;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-top: 2px solid #3a3a3a;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
   }
 
   #adminPanel.collapsed {
-    height: 50px;
+    height: 60px;
     overflow: hidden;
   }
 
@@ -312,18 +404,22 @@
   }
 
   #adminToggle {
-    background: #ff8c00;
+    background: #ff9900;
     border: none;
-    padding: 8px 16px;
+    padding: 12px 24px;
     color: #fff;
-    font-size: 1rem;
-    border-radius: 6px;
+    font-size: 1.2rem;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
 
   #adminToggle:hover {
     background: #e07b00;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
   }
 
   #adminContent.locked .admin-form {
@@ -331,77 +427,130 @@
   }
 
   #adminPassword {
-    padding: 8px;
-    font-size: 0.9rem;
-    border: 1px solid #2a2a2a;
-    background: #0a0a0a;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #3a3a3a;
+    background: #1a1a1a;
     color: #e0e0e0;
-    border-radius: 4px;
-    width: 180px;
+    border-radius: 10px;
+    width: 200px;
+    transition: border-color 0.3s ease;
+  }
+
+  #adminPassword:focus {
+    border-color: #ff9900;
+    outline: none;
   }
 
   .admin-form {
     display: flex;
-    gap: 12px;
-    margin-top: 10px;
+    gap: 15px;
+    margin-top: 15px;
     flex-wrap: wrap;
   }
 
   .admin-input, .admin-datetime {
-    padding: 8px;
-    font-size: 0.9rem;
-    border: 1px solid #2a2a2a;
-    background: #0a0a0a;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #3a3a3a;
+    background: #1a1a1a;
     color: #e0e0e0;
-    border-radius: 4px;
+    border-radius: 10px;
     flex: 1;
-    min-width: 150px;
+    min-width: 180px;
+    transition: border-color 0.3s ease;
+  }
+
+  .admin-input:focus, .admin-datetime:focus {
+    border-color: #ff9900;
+    outline: none;
   }
 
   .admin-select {
-    padding: 8px;
-    font-size: 0.9rem;
-    border: 1px solid #2a2a2a;
-    background: #0a0a0a;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #3a3a3a;
+    background: #1a1a1a;
     color: #e0e0e0;
-    border-radius: 4px;
-    min-width: 200px;
+    border-radius: 10px;
+    min-width: 220px;
+    transition: border-color 0.3s ease;
+  }
+
+  .admin-select:focus {
+    border-color: #ff9900;
+    outline: none;
   }
 
   .admin-button {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    background: #ff8c00;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #ff9900;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
     color: #fff;
-    transition: background 0.3s ease;
-    min-width: 100px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
   }
 
   .admin-button:hover {
     background: #e07b00;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
   }
 
   #adminStatus {
-    font-size: 0.9rem;
-    color: #b0b0b0;
-    margin-top: 10px;
+    font-size: 1rem;
+    color: #bbbbbb;
+    margin-top: 15px;
+    font-weight: 600;
   }
 
   #adminMessage {
-    font-size: 0.9rem;
-    color: #00ff00;
-    margin-top: 5px;
+    font-size: 1rem;
+    color: #00ff66;
+    margin-top: 10px;
     display: none;
+    font-weight: 600;
+  }
+
+  #adminMessage.error {
+    color: #ff6666;
+  }
+
+  @media (max-width: 768px) {
+    header {
+      padding: 15px 20px;
+    }
+    .nav-tab {
+      font-size: 1rem;
+      padding: 8px 15px;
+    }
+    #statusBar {
+      padding: 10px 20px;
+    }
+    .schedule-grid {
+      grid-template-columns: 1fr;
+    }
+    .stream-list {
+      grid-template-columns: 1fr 1fr;
+    }
+    .admin-form {
+      flex-direction: column;
+    }
+    .admin-input, .admin-datetime, .admin-select, .admin-button {
+      min-width: 100%;
+    }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Football Live</h1>
+  <h1>Football Live Streams</h1>
   <div class="nav-tabs" id="navTabs">
     <div class="nav-tab active" data-page="schedule">Schedule</div>
     <div class="nav-tab" data-page="streams">Streams</div>
@@ -426,7 +575,7 @@
 </div>
 
 <div id="streams" class="page">
-  <h2 id="streamMatchTitle" style="font-size: 1.8rem; font-weight: 600; color: #ff8c00;"></h2>
+  <h2 id="streamMatchTitle"></h2>
   <div class="stream-list" id="streamList"></div>
 </div>
 
@@ -474,7 +623,7 @@
 </div>
 
 <script>
-let matches = JSON.parse(localStorage.getItem('matches')) || [
+let matches = [
   {
     name: "Wolves VS Man City",
     streams: [
@@ -526,13 +675,12 @@ let matches = JSON.parse(localStorage.getItem('matches')) || [
   }
 ];
 
-// Convert startTime to Date objects when loading from localStorage
+// Convert startTime to Date objects
 matches = matches.map(match => ({
   ...match,
   startTime: new Date(match.startTime)
 }));
 
-// Sort matches by start time
 matches.sort((a, b) => a.startTime - b.startTime);
 
 let currentMatchIndex = 0;
@@ -607,7 +755,7 @@ function updatePage() {
   }
 }
 
-// Render schedule page with enhanced features
+// Render schedule page with enhanced features and 120-minute finished rule
 function renderSchedule() {
   loadingSpinner.style.display = 'block';
   scheduleGrid.innerHTML = '';
@@ -617,30 +765,26 @@ function renderSchedule() {
   setTimeout(() => {
     scheduleGrid.innerHTML = '';
     matches.forEach((match, index) => {
+      const elapsed = Math.floor((now - match.startTime) / 1000);
+      let status = 'finished';
+      let timeText = 'Finished';
+      if (elapsed < 0) {
+        status = 'upcoming';
+        timeText = `Starts in ${formatTime(Math.abs(elapsed))}`;
+      } else if (elapsed < 120 * 60) { // 120 minutes = 7200 seconds
+        status = 'live';
+        timeText = `Live for ${formatTime(elapsed)}`;
+      }
+
       const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
       if (now - matchEndTime <= fourHoursInMs) {
-        const elapsed = Math.floor((now - match.startTime) / 1000);
-        let status = 'finished';
-        let timeText = 'Finished';
-        if (elapsed < 0) {
-          status = 'upcoming';
-          timeText = `Starts in ${formatTime(Math.abs(elapsed))}`;
-        } else if (elapsed < 110 * 60) {
-          status = 'live';
-          timeText = `Live for ${formatTime(elapsed)}`;
-        }
-
         const item = document.createElement('div');
         item.className = 'schedule-item';
         item.innerHTML = `
-          <div class="match-header">
-            <div class="team-logo"></div>
-            <div class="match-details">
-              <h3>${match.name}</h3>
-              <p>Status: <span class="match-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
-              <p>Time: ${timeText}</p>
-            </div>
-            <div class="team-logo away"></div>
+          <div class="match-details">
+            <h3>${match.name}</h3>
+            <p>Status: <span class="match-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+            <p>Time: ${timeText}</p>
           </div>
           <button class="details-btn" onclick="showDetails(${index})">Details</button>
         `;
@@ -654,7 +798,7 @@ function renderSchedule() {
       }
     });
     loadingSpinner.style.display = 'none';
-  }, 500); // Simulate loading delay
+  }, 500);
 }
 
 function showDetails(index) {
@@ -692,42 +836,35 @@ function filterByStatus(status) {
   setTimeout(() => {
     scheduleGrid.innerHTML = '';
     matches.forEach((match, index) => {
+      const elapsed = Math.floor((now - match.startTime) / 1000);
+      let matchStatus = 'finished';
+      if (elapsed < 0) matchStatus = 'upcoming';
+      else if (elapsed < 120 * 60) matchStatus = 'live';
       const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000);
-      if (now - matchEndTime <= fourHoursInMs) {
-        const elapsed = Math.floor((now - match.startTime) / 1000);
-        let matchStatus = 'finished';
-        if (elapsed < 0) matchStatus = 'upcoming';
-        else if (elapsed < 110 * 60) matchStatus = 'live';
-        if (status === 'all' || matchStatus === status) {
-          const item = document.createElement('div');
-          item.className = 'schedule-item';
-          item.innerHTML = `
-            <div class="match-header">
-              <div class="team-logo"></div>
-              <div class="match-details">
-                <h3>${match.name}</h3>
-                <p>Status: <span class="match-status ${matchStatus}">${matchStatus.charAt(0).toUpperCase() + matchStatus.slice(1)}</span></p>
-                <p>Time: ${elapsed < 0 ? `Starts in ${formatTime(Math.abs(elapsed))}` : `Live for ${formatTime(elapsed)}`}</p>
-              </div>
-              <div class="team-logo away"></div>
-            </div>
-            <button class="details-btn" onclick="showDetails(${index})">Details</button>
-          `;
-          item.onclick = () => {
-            currentMatchIndex = index;
-            currentStreamIndex = 0;
-            currentPage = 'streams';
-            updatePage();
-          };
-          scheduleGrid.appendChild(item);
-        }
+      if (now - matchEndTime <= fourHoursInMs && (status === 'all' || matchStatus === status)) {
+        const item = document.createElement('div');
+        item.className = 'schedule-item';
+        item.innerHTML = `
+          <div class="match-details">
+            <h3>${match.name}</h3>
+            <p>Status: <span class="match-status ${matchStatus}">${matchStatus.charAt(0).toUpperCase() + matchStatus.slice(1)}</span></p>
+            <p>Time: ${elapsed < 0 ? `Starts in ${formatTime(Math.abs(elapsed))}` : `Live for ${formatTime(elapsed)}`}</p>
+          </div>
+          <button class="details-btn" onclick="showDetails(${index})">Details</button>
+        `;
+        item.onclick = () => {
+          currentMatchIndex = index;
+          currentStreamIndex = 0;
+          currentPage = 'streams';
+          updatePage();
+        };
+        scheduleGrid.appendChild(item);
       }
     });
     loadingSpinner.style.display = 'none';
   }, 500);
 }
 
-// Render streams page
 function renderStreams() {
   streamMatchTitle.textContent = matches[currentMatchIndex].name;
   streamList.innerHTML = '';
@@ -744,7 +881,6 @@ function renderStreams() {
   });
 }
 
-// Load stream and monitor load status
 function loadStream() {
   const match = matches[currentMatchIndex];
   if (currentStreamIndex >= match.streams.length) {
@@ -784,7 +920,6 @@ function loadStream() {
   };
 }
 
-// Check for stream playback status
 function startStreamCheck() {
   if (streamCheckInterval) clearInterval(streamCheckInterval);
 
@@ -800,7 +935,6 @@ function startStreamCheck() {
   }, 2000);
 }
 
-// MATCH TIMER LOGIC
 function startMatchTimer() {
   if (timerInterval) clearInterval(timerInterval);
 
@@ -840,7 +974,6 @@ function formatTime(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-// Admin Panel Functions
 adminToggle.addEventListener('click', () => {
   adminPanel.classList.toggle('collapsed');
   adminPanel.classList.toggle('expanded');
@@ -874,13 +1007,13 @@ function addGame() {
     adminTitle.value = '';
     adminStreams.value = '';
     adminTime.value = '';
-    saveMatches();
     renderSchedule();
+    updateDropdowns();
     showMessage('Game added successfully!');
-  } else {
-    showMessage('Please fill all fields!', true);
+      } else {
+      showMessage('Please fill all fields!', true);
+    }
   }
-}
 
 function editGame() {
   const index = adminEdit.value;
@@ -894,7 +1027,6 @@ function editGame() {
       adminTitle.value = '';
       adminStreams.value = '';
       adminTime.value = '';
-      saveMatches();
       renderSchedule();
       updateDropdowns();
       showMessage('Game updated successfully!');
@@ -908,17 +1040,15 @@ function removeGame() {
   const index = adminRemove.value;
   if (index) {
     matches.splice(index, 1);
-    saveMatches();
-    updateDropdowns();
     renderSchedule();
+    updateDropdowns();
     showMessage('Game removed successfully!');
   }
 }
 
 function resetGames() {
-  if (confirm('Are you sure you want to reset all games? This will clear saved data.')) {
-    localStorage.removeItem('matches');
-    matches = [...JSON.parse(localStorage.getItem('matches')) || [
+  if (confirm('Are you sure you want to reset all games?')) {
+    matches = [
       {
         name: "Wolves VS Man City",
         streams: [
@@ -968,8 +1098,7 @@ function resetGames() {
         ],
         startTime: new Date("2025-08-17T14:00:00")
       }
-    ]].map(match => ({ ...match, startTime: new Date(match.startTime) }));
-    saveMatches();
+    ].map(match => ({ ...match, startTime: new Date(match.startTime) }));
     renderSchedule();
     updateDropdowns();
     showMessage('Games reset successfully!');
@@ -988,13 +1117,9 @@ function updateDropdowns() {
   });
 }
 
-function saveMatches() {
-  localStorage.setItem('matches', JSON.stringify(matches));
-}
-
 function showMessage(text, isError = false) {
   adminMessage.textContent = text;
-  adminMessage.style.color = isError ? '#ff4444' : '#00ff00';
+  adminMessage.className = isError ? 'error' : '';
   adminMessage.style.display = 'block';
   setTimeout(() => {
     adminMessage.style.display = 'none';
@@ -1009,6 +1134,5 @@ updatePage();
 // Auto-refresh schedule
 setInterval(renderSchedule, 60000);
 </script>
-
 </body>
 </html>
