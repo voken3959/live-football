@@ -278,127 +278,6 @@
     text-align: center;
     text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
   }
-  #adminPanel {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
-    padding: 20px;
-    border-top: 2px solid #3a3a3a;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    transition: all 0.4s ease;
-  }
-  #adminPanel.collapsed {
-    height: 60px;
-    overflow: hidden;
-  }
-  #adminPanel.expanded {
-    height: auto;
-  }
-  #adminToggle {
-    background: #ff9900;
-    border: none;
-    padding: 12px 24px;
-    color: #fff;
-    font-size: 1.2rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
-  }
-  #adminToggle:hover {
-    background: #e07b00;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
-  }
-  #adminContent.locked .admin-form {
-    display: none;
-  }
-  #adminPassword {
-    padding: 10px;
-    font-size: 1rem;
-    border: 2px solid #3a3a3a;
-    background: #1a1a1a;
-    color: #e0e0e0;
-    border-radius: 10px;
-    width: 200px;
-    transition: border-color 0.3s ease;
-  }
-  #adminPassword:focus {
-    border-color: #ff9900;
-    outline: none;
-  }
-  .admin-form {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-  }
-  .admin-input, .admin-datetime {
-    padding: 10px;
-    font-size: 1rem;
-    border: 2px solid #3a3a3a;
-    background: #1a1a1a;
-    color: #e0e0e0;
-    border-radius: 10px;
-    flex: 1;
-    min-width: 180px;
-    transition: border-color 0.3s ease;
-  }
-  .admin-input:focus, .admin-datetime:focus {
-    border-color: #ff9900;
-    outline: none;
-  }
-  .admin-select {
-    padding: 10px;
-    font-size: 1rem;
-    border: 2px solid #3a3a3a;
-    background: #1a1a1a;
-    color: #e0e0e0;
-    border-radius: 10px;
-    min-width: 220px;
-    transition: border-color 0.3s ease;
-  }
-  .admin-select:focus {
-    border-color: #ff9900;
-    outline: none;
-  }
-  .admin-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: #ff9900;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    color: #fff;
-    transition: all 0.3s ease;
-    min-width: 120px;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
-  }
-  .admin-button:hover {
-    background: #e07b00;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
-  }
-  #adminStatus {
-    font-size: 1rem;
-    color: #bbbbbb;
-    margin-top: 15px;
-    font-weight: 600;
-  }
-  #adminMessage {
-    font-size: 1rem;
-    color: #00ff66;
-    margin-top: 10px;
-    display: none;
-    font-weight: 600;
-  }
-  #adminMessage.error {
-    color: #ff6666;
-  }
   @media (max-width: 768px) {
     header {
       padding: 15px 20px;
@@ -416,16 +295,8 @@
     .stream-list {
       grid-template-columns: 1fr 1fr;
     }
-    .admin-form {
-      flex-direction: column;
-    }
-    .admin-input, .admin-datetime, .admin-select, .admin-button {
-      min-width: 100%;
-    }
   }
 </style>
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js"></script>
 </head>
 <body>
 <header>
@@ -458,97 +329,7 @@
     <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
   </div>
 </div>
-<div id="adminPanel" class="collapsed">
-  <button id="adminToggle">Toggle Admin Panel</button>
-  <div id="adminContent" class="locked">
-    <input type="password" id="adminPassword" placeholder="Enter password">
-    <div id="adminStatus">Status: Locked 🔒</div>
-    <div class="admin-form">
-      <input type="text" id="adminTitle" class="admin-input" placeholder="Game Title">
-      <input type="text" id="adminStreams" class="admin-input" placeholder="Stream Links (comma-separated)">
-      <input type="datetime-local" id="adminTime" class="admin-datetime" value="">
-      <button class="admin-button" onclick="addGame()">Add Game</button>
-    </div>
-    <div class="admin-form">
-      <select id="adminEdit" class="admin-select">
-        <option value="">Select Game to Edit</option>
-      </select>
-      <button class="admin-button" onclick="editGame()">Edit Game</button>
-      <select id="adminRemove" class="admin-select">
-        <option value="">Select Game to Remove</option>
-      </select>
-      <button class="admin-button" onclick="removeGame()">Remove Game</button>
-    </div>
-    <div class="admin-form">
-      <button class="admin-button" onclick="resetGames()">Reset Games</button>
-    </div>
-    <div id="adminMessage"></div>
-  </div>
-</div>
 <script>
-const defaultMatches = [
-  {
-    name: "Wolves VS Man City",
-    streams: [
-      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
-      "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
-    ],
-    startTime: "2025-08-16T17:30:00"
-  },
-  {
-    name: "Monaco VS Le Havre AC",
-    streams: [
-      "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
-      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
-    ],
-    startTime: "2025-08-16T18:00:00"
-  },
-  {
-    name: "Rangers VS Alloa Athletic",
-    streams: [
-      "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
-      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
-    ],
-    startTime: "2025-08-16T17:45:00"
-  },
-  {
-    name: "Mallorca VS Barcelona",
-    streams: [
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
-    ],
-    startTime: "2025-08-16T18:30:00"
-  },
-  {
-    name: "Stuttgart vs Bayern Munich",
-    streams: [
-      "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
-      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
-    ],
-    startTime: "2025-08-17T12:00:00"
-  },
-  {
-    name: "Inter Milan vs Olympiacos",
-    streams: [
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
-    ],
-    startTime: "2025-08-17T14:00:00"
-  }
-];
-const firebaseConfig = {
-  // REPLACE WITH YOUR OWN FIREBASE CONFIG HERE
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
 let matches = [];
 let currentMatchIndex = 0;
 let currentStreamIndex = 0;
@@ -564,17 +345,6 @@ const streamList = document.getElementById('streamList');
 const playerFrame = document.getElementById('playerFrame');
 const streamStatus = document.getElementById('streamStatus');
 const timerEl = document.getElementById('timer');
-const adminPanel = document.getElementById('adminPanel');
-const adminToggle = document.getElementById('adminToggle');
-const adminContent = document.getElementById('adminContent');
-const adminPassword = document.getElementById('adminPassword');
-const adminStatus = document.getElementById('adminStatus');
-const adminTitle = document.getElementById('adminTitle');
-const adminStreams = document.getElementById('adminStreams');
-const adminTime = document.getElementById('adminTime');
-const adminEdit = document.getElementById('adminEdit');
-const adminRemove = document.getElementById('adminRemove');
-const adminMessage = document.getElementById('adminMessage');
 // Page navigation
 navTabs.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -611,7 +381,26 @@ function updatePage() {
     startStreamCheck();
   }
 }
-// Render schedule page with enhanced features and 120-minute finished rule
+// Fetch matches from API
+function fetchMatches() {
+  fetch('https://streamed.pk/api/matches/football')
+    .then(response => response.json())
+    .then(data => {
+      matches = data
+        .filter(m => m.category === 'football' && m.date > 0) // Filter football and with valid date
+        .map(m => ({
+          name: m.title,
+          startTime: new Date(m.date),
+          sources: m.sources,
+          poster: m.poster,
+          teams: m.teams
+        }));
+      matches.sort((a, b) => a.startTime - b.startTime);
+      renderSchedule();
+    })
+    .catch(error => console.error('Error fetching matches:', error));
+}
+// Render schedule page
 function renderSchedule() {
   scheduleGrid.innerHTML = '';
   const now = new Date();
@@ -623,7 +412,7 @@ function renderSchedule() {
     if (elapsed < 0) {
       status = 'upcoming';
       timeText = `Starts in ${formatTime(Math.abs(elapsed))}`;
-    } else if (elapsed < 120 * 60) { // 120 minutes = 7200 seconds
+    } else if (elapsed < 120 * 60) {
       status = 'live';
       timeText = `Live for ${formatTime(elapsed)}`;
     }
@@ -683,23 +472,42 @@ function filterByStatus(status) {
   });
 }
 function renderStreams() {
-  streamMatchTitle.textContent = matches[currentMatchIndex].name;
-  streamList.innerHTML = '';
-  matches[currentMatchIndex].streams.forEach((stream, index) => {
-    const item = document.createElement('div');
-    item.className = 'stream-item';
-    item.textContent = `Stream ${index + 1}`;
-    item.onclick = () => {
-      currentStreamIndex = index;
-      currentPage = 'match';
-      updatePage();
-    };
-    streamList.appendChild(item);
+  const match = matches[currentMatchIndex];
+  streamMatchTitle.textContent = match.name;
+  streamList.innerHTML = '<div>Loading streams...</div>'; // Loading indicator
+  Promise.all(match.sources.map(source => 
+    fetch(`https://streamed.pk/api/stream/${source.source}/${source.id}`)
+      .then(res => res.json())
+      .then(streamData => streamData.map(s => s.embedUrl))
+      .catch(() => []) // Handle errors per source
+  ))
+  .then(allStreamsArrays => {
+    const allUrls = allStreamsArrays.flat().filter(url => url); // Flatten and remove empties
+    match.streams = allUrls; // Store in match
+    streamList.innerHTML = '';
+    allUrls.forEach((url, index) => {
+      const item = document.createElement('div');
+      item.className = 'stream-item';
+      item.textContent = `Stream ${index + 1}`;
+      item.onclick = () => {
+        currentStreamIndex = index;
+        currentPage = 'match';
+        updatePage();
+      };
+      streamList.appendChild(item);
+    });
+    if (allUrls.length === 0) {
+      streamList.innerHTML = '<div>No streams available</div>';
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching streams:', error);
+    streamList.innerHTML = '<div>Error loading streams</div>';
   });
 }
 function loadStream() {
   const match = matches[currentMatchIndex];
-  if (currentStreamIndex >= match.streams.length) {
+  if (!match.streams || currentStreamIndex >= match.streams.length) {
     streamStatus.textContent = 'No more streams available';
     streamStatus.className = 'status-frozen';
     return;
@@ -747,8 +555,7 @@ function startStreamCheck() {
 function startMatchTimer() {
   if (timerInterval) clearInterval(timerInterval);
   const match = matches[currentMatchIndex];
-  const startTime = new Date(match.startTime);
-  const now = new Date();
+  const startTime = match.startTime;
   timerInterval = setInterval(() => {
     const currentTime = new Date();
     let elapsed = Math.floor((currentTime - startTime) / 1000);
@@ -777,138 +584,11 @@ function formatTime(seconds) {
   const s = seconds % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
-adminToggle.addEventListener('click', () => {
-  adminPanel.classList.toggle('collapsed');
-  adminPanel.classList.toggle('expanded');
-  if (adminPanel.classList.contains('expanded')) {
-    adminToggle.textContent = 'Collapse Admin Panel';
-  } else {
-    adminToggle.textContent = 'Toggle Admin Panel';
-  }
-});
-adminPassword.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    if (adminPassword.value === 'admin123') {
-      adminContent.classList.remove('locked');
-      adminStatus.textContent = 'Status: Unlocked 🔓';
-      adminPassword.style.display = 'none';
-      updateDropdowns();
-    } else {
-      adminStatus.textContent = 'Status: Locked 🔒 (Wrong Password)';
-    }
-  }
-});
-adminEdit.addEventListener('change', () => {
-  const index = adminEdit.value;
-  if (index !== '') {
-    const match = matches[index];
-    adminTitle.value = match.name;
-    adminStreams.value = match.streams.join(',');
-    adminTime.value = match.startTime.toISOString().slice(0, 16);
-  } else {
-    adminTitle.value = '';
-    adminStreams.value = '';
-    adminTime.value = '';
-  }
-});
-function addGame() {
-  const title = adminTitle.value.trim();
-  const streamsInput = adminStreams.value.trim();
-  const time = adminTime.value ? new Date(adminTime.value) : new Date();
-  if (title && streamsInput) {
-    const streams = streamsInput.split(',').map(s => s.trim()).filter(s => s);
-    matches.push({ name: title, streams: streams, startTime: time });
-    saveMatches();
-    adminTitle.value = '';
-    adminStreams.value = '';
-    adminTime.value = '';
-    showMessage('Game added successfully!');
-  } else {
-    showMessage('Please fill all fields!', true);
-  }
-}
-function editGame() {
-  const index = adminEdit.value;
-  if (index !== '') {
-    const title = adminTitle.value.trim() || matches[index].name;
-    const streamsInput = adminStreams.value.trim() || matches[index].streams.join(', ');
-    const time = adminTime.value ? new Date(adminTime.value) : matches[index].startTime;
-    if (title && streamsInput) {
-      const streams = streamsInput.split(',').map(s => s.trim()).filter(s => s);
-      matches[index] = { name: title, streams: streams, startTime: time };
-      saveMatches();
-      adminTitle.value = '';
-      adminStreams.value = '';
-      adminTime.value = '';
-      showMessage('Game updated successfully!');
-    } else {
-      showMessage('Please fill all fields!', true);
-    }
-  } else {
-    showMessage('Please select a game to edit!', true);
-  }
-}
-function removeGame() {
-  const index = adminRemove.value;
-  if (index !== '') {
-    matches.splice(index, 1);
-    saveMatches();
-    showMessage('Game removed successfully!');
-  } else {
-    showMessage('Please select a game to remove!', true);
-  }
-}
-function resetGames() {
-  if (confirm('Are you sure you want to reset all games? This will remove your custom games!')) {
-    matches = defaultMatches.map(match => ({ ...match, startTime: new Date(match.startTime) }));
-    saveMatches();
-    showMessage('Games reset successfully!');
-  }
-}
-function updateDropdowns() {
-  [adminEdit, adminRemove].forEach(select => {
-    select.innerHTML = '<option value="">Select Game</option>';
-    matches.forEach((match, index) => {
-      const option = document.createElement('option');
-      option.value = index;
-      option.textContent = match.name;
-      select.appendChild(option);
-    });
-  });
-}
-function showMessage(text, isError = false) {
-  adminMessage.textContent = text;
-  adminMessage.className = isError ? 'error' : '';
-  adminMessage.style.display = 'block';
-  setTimeout(() => {
-    adminMessage.style.display = 'none';
-  }, 3000);
-}
-function loadMatches() {
-  const matchesRef = database.ref('matches');
-  matchesRef.on('value', (snapshot) => {
-    let data = snapshot.val();
-    if (!data) {
-      data = defaultMatches.map(match => ({ ...match, startTime: match.startTime }));
-      saveMatches();
-    } else {
-      data = data.map(match => ({ ...match, startTime: match.startTime }));
-    }
-    matches = data.map(match => ({ ...match, startTime: new Date(match.startTime) }));
-    matches.sort((a, b) => a.startTime - b.startTime);
-    renderSchedule();
-    updateDropdowns();
-  });
-}
-function saveMatches() {
-  database.ref('matches').set(matches.map(match => ({ ...match, startTime: match.startTime.toISOString() })));
-}
 // Initialize
-adminTime.value = new Date().toISOString().slice(0, 16);
-loadMatches();
+fetchMatches();
 updatePage();
-// Auto-refresh schedule
-setInterval(renderSchedule, 60000);
+// Auto-refresh schedule every 5 minutes
+setInterval(fetchMatches, 300000);
 </script>
 </body>
 </html>
