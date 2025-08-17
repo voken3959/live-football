@@ -298,7 +298,7 @@
 </div>
 
 <script>
-const matches = [
+let matches = JSON.parse(localStorage.getItem('matches')) || [
   {
     name: "Wolves VS Man City",
     streams: [
@@ -591,6 +591,7 @@ function addGame() {
     });
     adminTitle.value = '';
     adminStreams.value = '';
+    saveMatches();
     renderSchedule();
   }
 }
@@ -599,6 +600,7 @@ function removeGame() {
   const selectedIndex = adminRemove.value;
   if (selectedIndex) {
     matches.splice(selectedIndex, 1);
+    saveMatches();
     updateRemoveDropdown();
     renderSchedule();
   }
@@ -612,6 +614,10 @@ function updateRemoveDropdown() {
     option.textContent = match.name;
     adminRemove.appendChild(option);
   });
+}
+
+function saveMatches() {
+  localStorage.setItem('matches', JSON.stringify(matches));
 }
 
 // Initialize
