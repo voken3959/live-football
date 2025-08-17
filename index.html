@@ -12,8 +12,7 @@
     color: #e0e0e0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
   }
 
   header {
@@ -48,7 +47,7 @@
   }
 
   .nav-tab:hover {
-    background: #3a3a3a;
+    background: #3a3a2a;
     transform: translateY(-1px);
   }
 
@@ -184,15 +183,16 @@
     width: 100%;
     background: #1a1a1a;
     padding: 10px;
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 10px;
     border-top: 1px solid #2a2a2a;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
   }
 
-  #adminPanel.active {
-    display: flex;
+  #adminPanel.locked .admin-form {
+    display: none;
   }
 
   #adminPassword {
@@ -202,6 +202,7 @@
     background: #0a0a0a;
     color: #e0e0e0;
     border-radius: 4px;
+    width: 150px;
   }
 
   .admin-form {
@@ -242,6 +243,11 @@
   .admin-button:hover {
     background: #e07b00;
   }
+
+  #adminStatus {
+    font-size: 0.8rem;
+    color: #b0b0b0;
+  }
 </style>
 </head>
 <body>
@@ -275,8 +281,9 @@
   </div>
 </div>
 
-<div id="adminPanel">
+<div id="adminPanel" class="locked">
   <input type="password" id="adminPassword" placeholder="Enter password">
+  <div id="adminStatus">Status: Locked 🔒</div>
   <div class="admin-form">
     <input type="text" id="adminTitle" class="admin-input" placeholder="Game Title">
     <input type="text" id="adminStreams" class="admin-input" placeholder="Stream Links (comma-separated)">
@@ -363,6 +370,7 @@ const streamStatus = document.getElementById('streamStatus');
 const timerEl = document.getElementById('timer');
 const adminPanel = document.getElementById('adminPanel');
 const adminPassword = document.getElementById('adminPassword');
+const adminStatus = document.getElementById('adminStatus');
 const adminTitle = document.getElementById('adminTitle');
 const adminStreams = document.getElementById('adminStreams');
 const adminRemove = document.getElementById('adminRemove');
@@ -559,10 +567,15 @@ function formatTime(seconds) {
 
 // Admin Panel Functions
 adminPassword.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && adminPassword.value === 'admin123') {
-    adminPanel.classList.add('active');
-    adminPassword.style.display = 'none';
-    updateRemoveDropdown();
+  if (e.key === 'Enter') {
+    if (adminPassword.value === 'admin123') {
+      adminPanel.classList.remove('locked');
+      adminStatus.textContent = 'Status: Unlocked 🔓';
+      adminPassword.style.display = 'none';
+      updateRemoveDropdown();
+    } else {
+      adminStatus.textContent = 'Status: Locked 🔒 (Wrong Password)';
+    }
   }
 });
 
