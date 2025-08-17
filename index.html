@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Football Streams</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1941629901001403"
-     crossorigin="anonymous"></script>
 <style>
   body {
     margin: 0;
@@ -180,9 +178,69 @@
     border-radius: 10px;
   }
 
-  .ad-container {
-    margin-top: 20px;
-    text-align: center;
+  #adminPanel {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #1a1a1a;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #2a2a2a;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  #adminPanel.active {
+    display: flex;
+  }
+
+  #adminPassword {
+    padding: 5px;
+    font-size: 0.9rem;
+    border: 1px solid #2a2a2a;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    border-radius: 4px;
+  }
+
+  .admin-form {
+    display: flex;
+    gap: 10px;
+  }
+
+  .admin-input {
+    padding: 5px;
+    font-size: 0.9rem;
+    border: 1px solid #2a2a2a;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    border-radius: 4px;
+    flex: 1;
+  }
+
+  .admin-select {
+    padding: 5px;
+    font-size: 0.9rem;
+    border: 1px solid #2a2a2a;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    border-radius: 4px;
+  }
+
+  .admin-button {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    background: #ff8c00;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    transition: background 0.3s ease;
+  }
+
+  .admin-button:hover {
+    background: #e07b00;
   }
 </style>
 </head>
@@ -204,29 +262,11 @@
 
 <div id="schedule" class="page active">
   <div class="schedule-grid" id="scheduleGrid"></div>
-  <div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:inline-block;width:728px;height:90px"
-         data-ad-client="ca-pub-1941629901001403"
-         data-ad-slot="XXXXXXXXXX"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
 </div>
 
 <div id="streams" class="page">
   <h2 id="streamMatchTitle" style="font-size: 1.8rem; font-weight: 600; color: #ff8c00;"></h2>
   <div class="stream-list" id="streamList"></div>
-  <div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:inline-block;width:300px;height:250px"
-         data-ad-client="ca-pub-1941629901001403"
-         data-ad-slot="XXXXXXXXXX"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
 </div>
 
 <div id="match" class="page">
@@ -234,7 +274,22 @@
     <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture;"></iframe>
   </div>
 </div>
-  
+
+<div id="adminPanel">
+  <input type="password" id="adminPassword" placeholder="Enter password">
+  <div class="admin-form">
+    <input type="text" id="adminTitle" class="admin-input" placeholder="Game Title">
+    <input type="text" id="adminStreams" class="admin-input" placeholder="Stream Links (comma-separated)">
+    <button class="admin-button" onclick="addGame()">Add Game</button>
+  </div>
+  <div class="admin-form">
+    <select id="adminRemove" class="admin-select">
+      <option value="">Select Game to Remove</option>
+    </select>
+    <button class="admin-button" onclick="removeGame()">Remove Game</button>
+  </div>
+</div>
+
 <script>
 const matches = [
   {
@@ -242,13 +297,7 @@ const matches = [
     streams: [
       "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/1",
       "https://embedsports.top/embed/echo/wolves-vs-manchester-city-football-1378975/2",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/2",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/3",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/4",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/5",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/6",
-      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/7"
+      "https://embedsports.top/embed/alpha/wolverhampton-wanderers-vs-manchester-city/1"
     ],
     startTime: new Date("2025-08-16T17:30:00")
   },
@@ -256,8 +305,7 @@ const matches = [
     name: "Monaco VS Le Havre AC",
     streams: [
       "https://embedsports.top/embed/echo/as-monaco-vs-le-havre-ac/1",
-      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1",
-      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/2"
+      "https://embedsports.top/embed/alpha/as-monaco-vs-le-havre-ac/1"
     ],
     startTime: new Date("2025-08-16T18:00:00")
   },
@@ -265,9 +313,7 @@ const matches = [
     name: "Rangers VS Alloa Athletic",
     streams: [
       "https://embedsports.top/embed/echo/rangers-vs-alloa-athletic-football-1421767/1",
-      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1",
-      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/2",
-      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/3"
+      "https://embedsports.top/embed/alpha/rangers-vs-alloa-athletic/1"
     ],
     startTime: new Date("2025-08-16T17:45:00")
   },
@@ -275,9 +321,7 @@ const matches = [
     name: "Mallorca VS Barcelona",
     streams: [
       "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/1",
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2",
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/3",
-      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/4"
+      "https://embedsports.top/embed/alpha/mallorca-vs-barcelona/2"
     ],
     startTime: new Date("2025-08-16T18:30:00")
   },
@@ -285,81 +329,17 @@ const matches = [
     name: "Stuttgart vs Bayern Munich",
     streams: [
       "https://embedsports.top/embed/alpha/germany-super-cup-vfb-stuttgart-vs-bayern-munich/1",
-      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2",
-      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/3",
-      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/4"
+      "https://embedsports.top/embed/alpha/stuttgart-vs-bayern-munich/2"
     ],
-    startTime: new Date("2025-08-16T19:30:00")
+    startTime: new Date("2025-08-17T12:00:00")
   },
   {
     name: "Inter Milan vs Olympiacos",
     streams: [
       "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/1",
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2",
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/3",
-      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/4"
+      "https://embedsports.top/embed/alpha/inter-milan-vs-olympiacos/2"
     ],
-    startTime: new Date("2025-08-16T19:30:00")
-  },
-  {
-    name: "Alaves vs Levante",
-    streams: [
-      "https://embedsports.top/embed/alpha/alaves-vs-levante/1",
-      "https://embedsports.top/embed/alpha/alaves-vs-levante/2",
-      "https://embedsports.top/embed/alpha/alaves-vs-levante/3",
-      "https://embedsports.top/embed/alpha/alaves-vs-levante/4"
-    ],
-    startTime: new Date("2025-08-16T20:30:00")
-  },
-  {
-    name: "Valencia vs Real Sociedad",
-    streams: [
-      "https://embedsports.top/embed/alpha/valencia-vs-real-sociedad/1",
-      "https://embedsports.top/embed/alpha/valencia-vs-real-sociedad/2",
-      "https://embedsports.top/embed/alpha/valencia-vs-real-sociedad/3",
-      "https://embedsports.top/embed/alpha/valencia-vs-real-sociedad/4"
-    ],
-    startTime: new Date("2025-08-16T20:30:00")
-  },
-  {
-    name: "Goztepe vs Fenerbahce",
-    streams: [
-      "https://embedsports.top/embed/alpha/goztepe-vs-fenerbahce/1",
-      "https://embedsports.top/embed/alpha/goztepe-vs-fenerbahce/2",
-      "https://embedsports.top/embed/alpha/goztepe-vs-fenerbahce/3",
-      "https://embedsports.top/embed/alpha/goztepe-vs-fenerbahce/4"
-    ],
-    startTime: new Date("2025-08-16T19:30:00")
-  },
-  {
-    name: "Bologna vs OFI Crete",
-    streams: [
-      "https://embedsports.top/embed/alpha/bologna-vs-ofi-crete/1",
-      "https://embedsports.top/embed/alpha/bologna-vs-ofi-crete/2",
-      "https://embedsports.top/embed/alpha/bologna-vs-ofi-crete/3",
-      "https://embedsports.top/embed/alpha/bologna-vs-ofi-crete/4"
-    ],
-    startTime: new Date("2025-08-16T19:45:00")
-  },
-  {
-    name: "Atalanta vs Juventus",
-    streams: [
-      "https://embedsports.top/embed/alpha/atalanta-vs-juventus/1",
-      "https://embedsports.top/embed/alpha/atalanta-vs-juventus/2",
-      "https://embedsports.top/embed/alpha/atalanta-vs-juventus/3",
-      "https://embedsports.top/embed/alpha/atalanta-vs-juventus/4"
-    ],
-    startTime: new Date("2025-08-16T19:45:00")
-  },
-  {
-    name: "Amadora vs Benfica",
-    streams: [
-      "https://embedsports.top/embed/alpha/estrela-amadora-vs-benfica/1",
-      "https://embedsports.top/embed/alpha/estrela-amadora-vs-benfica/2",
-      "https://embedsports.top/embed/alpha/estrela-amadora-vs-benfica/3",
-      "https://embedsports.top/embed/alpha/estrela-amadora-vs-benfica/4"
-    ],
-    startTime: new Date("2025-08-16T20:30:00")
+    startTime: new Date("2025-08-17T14:00:00")
   }
 ];
 
@@ -381,6 +361,11 @@ const streamList = document.getElementById('streamList');
 const playerFrame = document.getElementById('playerFrame');
 const streamStatus = document.getElementById('streamStatus');
 const timerEl = document.getElementById('timer');
+const adminPanel = document.getElementById('adminPanel');
+const adminPassword = document.getElementById('adminPassword');
+const adminTitle = document.getElementById('adminTitle');
+const adminStreams = document.getElementById('adminStreams');
+const adminRemove = document.getElementById('adminRemove');
 
 // Page navigation
 navTabs.querySelectorAll('.nav-tab').forEach(tab => {
@@ -452,6 +437,7 @@ function renderSchedule() {
       scheduleGrid.appendChild(item);
     }
   });
+  updateRemoveDropdown();
 }
 
 // Render streams page
@@ -569,6 +555,50 @@ function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+// Admin Panel Functions
+adminPassword.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && adminPassword.value === 'admin123') {
+    adminPanel.classList.add('active');
+    adminPassword.style.display = 'none';
+    updateRemoveDropdown();
+  }
+});
+
+function addGame() {
+  const title = adminTitle.value.trim();
+  const streamsInput = adminStreams.value.trim();
+  if (title && streamsInput) {
+    const streams = streamsInput.split(',').map(s => s.trim()).filter(s => s);
+    matches.push({
+      name: title,
+      streams: streams,
+      startTime: new Date()
+    });
+    adminTitle.value = '';
+    adminStreams.value = '';
+    renderSchedule();
+  }
+}
+
+function removeGame() {
+  const selectedIndex = adminRemove.value;
+  if (selectedIndex) {
+    matches.splice(selectedIndex, 1);
+    updateRemoveDropdown();
+    renderSchedule();
+  }
+}
+
+function updateRemoveDropdown() {
+  adminRemove.innerHTML = '<option value="">Select Game to Remove</option>';
+  matches.forEach((match, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = match.name;
+    adminRemove.appendChild(option);
+  });
 }
 
 // Initialize
