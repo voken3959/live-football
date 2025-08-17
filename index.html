@@ -397,6 +397,12 @@ let matches = JSON.parse(localStorage.getItem('matches')) || [
   }
 ];
 
+// Convert startTime to Date objects when loading from localStorage
+matches = matches.map(match => ({
+  ...match,
+  startTime: new Date(match.startTime)
+}));
+
 // Sort matches by start time
 matches.sort((a, b) => a.startTime - b.startTime);
 
@@ -471,6 +477,7 @@ function renderSchedule() {
   scheduleGrid.innerHTML = '';
   const now = new Date();
   const fourHoursInMs = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+  console.log('Rendering schedule with matches:', matches); // Debug log
 
   matches.forEach((match, index) => {
     const matchEndTime = new Date(match.startTime.getTime() + 110 * 60 * 1000); // Assuming match ends after 110 minutes
@@ -495,6 +502,8 @@ function renderSchedule() {
         updatePage();
       };
       scheduleGrid.appendChild(item);
+    } else {
+      console.log(`Match ${match.name} hidden (ended ${now - matchEndTime}ms ago)`); // Debug hidden matches
     }
   });
   updateDropdowns();
@@ -745,7 +754,7 @@ function resetGames() {
         ],
         startTime: new Date("2025-08-17T14:00:00")
       }
-    ]];
+    ]].map(match => ({ ...match, startTime: new Date(match.startTime) }));
     saveMatches();
     renderSchedule();
     updateDropdowns();
@@ -780,6 +789,7 @@ function showMessage(text, isError = false) {
 
 // Initialize
 adminTime.value = new Date().toISOString().slice(0, 16);
+renderSchedule(); // Ensure schedule renders on load with saved data
 updatePage();
 </script>
 
