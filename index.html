@@ -22,7 +22,7 @@
             --accent-yellow: #ffcc33;
             --accent-red: #ff6666;
             --accent-blue: #00ccff;
-            --grey-box: #808080;
+            --schedule-box: #4a4a4a; /* Darker shade for schedule boxes */
         }
 
         * {
@@ -56,7 +56,7 @@
             --accent-yellow: #e6b800;
             --accent-red: #e60000;
             --accent-blue: #0099cc;
-            --grey-box: #c0c0c0;
+            --schedule-box: #d0d0d0; /* Lighter shade for light mode */
             background: linear-gradient(180deg, #ffffff, #f5f5f5);
         }
 
@@ -70,6 +70,20 @@
             position: sticky;
             top: 0;
             z-index: 1500;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1 i {
+            font-size: 1.8rem;
         }
 
         .nav-tabs {
@@ -186,21 +200,8 @@
             height: 100%;
             display: flex;
             flex: 1;
-            background: #000;
+            background: linear-gradient(180deg, #000000, #1a1a1a); /* Sleek gradient */
             overflow: hidden;
-        }
-
-        #playerContainer::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid rgba(255, 153, 0, 0.3);
-            border-radius: 10px;
-            pointer-events: none;
-            z-index: 1;
         }
 
         iframe#playerFrame {
@@ -211,6 +212,33 @@
             top: 0;
             left: 0;
             z-index: 0;
+        }
+
+        #controlPanel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .control-btn {
+            background: var(--bg-light);
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-color);
         }
 
         #fullscreenBtn {
@@ -312,12 +340,12 @@
         }
 
         .schedule-item {
-            background: var(--grey-box);
+            background: linear-gradient(135deg, var(--schedule-box), var(--bg-light)); /* Gradient for visual appeal */
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid var(--grey-box);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid var(--schedule-box);
             box-shadow: 0 4px 12px var(--shadow);
             display: flex;
             flex-direction: column;
@@ -325,7 +353,7 @@
         }
 
         .schedule-item:hover {
-            transform: translateY(-5px);
+            transform: scale(1.05) rotate(1deg); /* Dynamic hover effect */
             box-shadow: 0 8px 16px var(--shadow);
         }
 
@@ -413,16 +441,31 @@
             gap: 10px;
         }
 
+        .stream-item:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: scale(1.1) translateY(-5px); /* Bounce effect */
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
         .stream-item i {
             font-size: 1.5rem;
             color: var(--primary-color);
         }
 
-        .stream-item:hover {
-            background: var(--primary-color);
+        .stream-item:hover i {
             color: #fff;
-            transform: translateY(-5px);
         }
+
+        .stream-quality {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+
+        .stream-quality.hd { background: var(--accent-green); color: #000; }
+        .stream-quality.sd { background: var(--accent-yellow); color: #000; }
 
         #streamMatchTitle {
             font-size: 2.5rem;
@@ -430,6 +473,7 @@
             color: var(--primary-color);
             margin-bottom: 30px;
             text-align: center;
+            text-shadow: 0 2px 4px var(--shadow);
         }
 
         #loadingSpinner {
@@ -508,6 +552,10 @@
         }
 
         @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
             .control-btn {
                 padding: 8px 15px;
                 font-size: 0.9rem;
@@ -541,25 +589,11 @@
             font-weight: bold;
             color: var(--primary-color);
         }
-
-        .favorite-btn {
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text-medium);
-            transition: color 0.3s ease;
-        }
-
-        .favorite-btn.active {
-            color: var(--accent-yellow);
-        }
-
-        .favorite-btn:hover {
-            color: var(--primary-color);
-        }
     </style>
 </head>
 <body>
     <header>
+        <h1><i class="fas fa-futbol"></i> Football Live Streams</h1>
         <div class="nav-tabs" id="navTabs">
             <div class="nav-tab active" data-page="schedule"><i class="fas fa-calendar-alt"></i> Schedule</div>
             <div class="nav-tab" data-page="streams"><i class="fas fa-stream"></i> Streams</div>
@@ -593,6 +627,12 @@
     <div id="match" class="page">
         <div id="playerContainer">
             <iframe id="playerFrame" src="" allowfullscreen allow="encrypted-media; picture-in-picture; fullscreen"></iframe>
+            <div id="controlPanel">
+                <button class="control-btn" onclick="togglePlayPause()"><i class="fas fa-play"></i></button>
+                <button class="control-btn" onclick="toggleQuality()"><i class="fas fa-cog"></i></button>
+                <button class="control-btn" onclick="adjustVolume(0.1)"><i class="fas fa-volume-up"></i></button>
+                <button class="control-btn" onclick="adjustVolume(-0.1)"><i class="fas fa-volume-down"></i></button>
+            </div>
             <button id="fullscreenBtn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
         </div>
     </div>
@@ -609,7 +649,8 @@
         let streamLoadTimeout = null;
         let streamCheckInterval = null;
         let isStreamPlaying = false;
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let isPaused = false;
+        let currentQuality = 'hd'; // Default quality
         const navTabs = document.getElementById('navTabs');
         const scheduleContainer = document.getElementById('scheduleContainer');
         const streamMatchTitle = document.getElementById('streamMatchTitle');
@@ -827,10 +868,14 @@
                     return;
                 }
                 allStreams.forEach((s, index) => {
-                    const hdLabel = 'hd' in s ? (s.hd ? '(HD)' : '') : (index === 0 ? '(HD)' : '');
+                    const isHD = 'hd' in s ? s.hd : (index === 0);
+                    const qualityLabel = isHD ? 'HD' : 'SD';
                     const item = document.createElement('div');
                     item.className = 'stream-item';
-                    item.innerHTML = `<i class="fas fa-play-circle"></i> Stream ${index + 1} ${hdLabel}`;
+                    item.innerHTML = `
+                        <i class="fas fa-play-circle"></i> Stream ${index + 1}
+                        <span class="stream-quality ${isHD ? 'hd' : 'sd'}">${qualityLabel}</span>
+                    `;
                     item.onclick = () => {
                         currentStreamIndex = index;
                         currentPage = 'match';
@@ -927,9 +972,13 @@
         }
 
         function formatTime(seconds) {
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            }
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
         }
 
         function toggleFullscreen() {
@@ -939,6 +988,28 @@
             } else {
                 document.exitFullscreen();
             }
+        }
+
+        function togglePlayPause() {
+            // Note: Actual play/pause may depend on iframe API; this is a placeholder
+            isPaused = !isPaused;
+            const playBtn = document.querySelector('#controlPanel .control-btn i.fa-play, #controlPanel .control-btn i.fa-pause');
+            playBtn.className = isPaused ? 'fas fa-play' : 'fas fa-pause';
+            // Simulate iframe control (may need specific stream API integration)
+            console.log(isPaused ? 'Pause stream' : 'Play stream');
+        }
+
+        function toggleQuality() {
+            // Toggle between HD and SD (simulated, as actual quality depends on stream API)
+            currentQuality = currentQuality === 'hd' ? 'sd' : 'hd';
+            console.log(`Switched to ${currentQuality.toUpperCase()} quality`);
+            // Reload stream with new quality if API supports it
+            loadStream();
+        }
+
+        function adjustVolume(change) {
+            // Volume control simulation (actual control depends on iframe stream)
+            console.log(`Volume adjusted by ${change}`);
         }
 
         function showLoading(show) {
