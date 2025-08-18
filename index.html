@@ -22,6 +22,7 @@
             --accent-yellow: #ffcc33;
             --accent-red: #ff6666;
             --accent-blue: #00ccff;
+            --grey-box: #808080;
         }
 
         * {
@@ -55,6 +56,7 @@
             --accent-yellow: #e6b800;
             --accent-red: #e60000;
             --accent-blue: #0099cc;
+            --grey-box: #c0c0c0;
             background: linear-gradient(180deg, #ffffff, #f5f5f5);
         }
 
@@ -68,20 +70,6 @@
             position: sticky;
             top: 0;
             z-index: 1500;
-        }
-
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        header h1 i {
-            font-size: 1.8rem;
         }
 
         .nav-tabs {
@@ -324,12 +312,12 @@
         }
 
         .schedule-item {
-            background: var(--bg-light);
+            background: var(--grey-box);
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid var(--bg-light);
+            border: 2px solid var(--grey-box);
             box-shadow: 0 4px 12px var(--shadow);
             display: flex;
             flex-direction: column;
@@ -520,10 +508,6 @@
         }
 
         @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
             .control-btn {
                 padding: 8px 15px;
                 font-size: 0.9rem;
@@ -548,7 +532,7 @@
         }
 
         .team-badge {
-            width: 40px;
+            width: auto;
             height: 40px;
             object-fit: contain;
         }
@@ -818,7 +802,7 @@
                         return [];
                     }
                 }));
-                const allStreams = allStreamsArrays.flat();
+                const allStreams = allStreamsArrays.flat().slice(1); // Remove the first stream
                 match.streams = allStreams;
                 streamCount.innerHTML = `Available Streams: ${allStreams.length}`;
                 streamList.innerHTML = '';
@@ -827,7 +811,7 @@
                     return;
                 }
                 allStreams.forEach((s, index) => {
-                    const hdLabel = 'hd' in s ? (s.hd ? '(HD)' : '') : (index === 0 ? '(HD)' : '');
+                    const hdLabel = s.hd ? '(HD)' : '';
                     const item = document.createElement('div');
                     item.className = 'stream-item';
                     item.innerHTML = `<i class="fas fa-play-circle"></i> Stream ${index + 1} ${hdLabel}`;
