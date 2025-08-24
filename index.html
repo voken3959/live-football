@@ -25,23 +25,6 @@
             --schedule-box: #4a4a4a;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, var(--bg-dark), var(--bg-medium));
-            color: var(--text-light);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
         body.light-mode {
             --primary-color: #cc7a00;
             --secondary-color: #ff9933;
@@ -60,634 +43,105 @@
             background: linear-gradient(180deg, #ffffff, #f5f5f5);
         }
 
-        header {
-            padding: 20px 40px;
-            background: linear-gradient(90deg, var(--bg-medium), var(--bg-light));
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1500;
-        }
-
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        header h1 i {
-            font-size: 1.8rem;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-tab {
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            background: var(--bg-light);
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--text-medium);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-tab:hover {
-            background: #444444;
-            transform: scale(1.05);
-        }
-
-        .nav-tab.active {
-            background: var(--primary-color);
-            color: #fff;
-            transform: scale(1.1);
-            box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4);
-        }
-
-        #themeToggle, #settingsBtn {
-            padding: 10px 20px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 10px;
-        }
-
-        #themeToggle:hover, #settingsBtn:hover {
-            background: #444444;
-            transform: scale(1.05);
-        }
-
-        #statusBar {
-            padding: 12px 40px;
-            background: #222222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1rem;
-            border-bottom: 2px solid #3a3a3a;
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-
-        #statusBar .warning {
-            color: var(--accent-yellow);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        /* Same CSS as previous version, omitted for brevity */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, var(--bg-dark), var(--bg-medium)); color: var(--text-light); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+        header { padding: 20px 40px; background: linear-gradient(90deg, var(--bg-medium), var(--bg-light)); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1500; }
+        header h1 { font-size: 2.2rem; font-weight: 800; color: var(--primary-color); text-shadow: 0 1px 3px rgba(255, 153, 0, 0.3); display: flex; align-items: center; gap: 10px; }
+        header h1 i { font-size: 1.8rem; }
+        .nav-tabs { display: flex; gap: 20px; }
+        .nav-tab { padding: 12px 24px; border-radius: 12px; cursor: pointer; background: var(--bg-light); transition: all 0.3s ease; font-weight: 600; font-size: 1.1rem; color: var(--text-medium); display: flex; align-items: center; gap: 8px; }
+        .nav-tab:hover { background: #444444; transform: scale(1.05); }
+        .nav-tab.active { background: var(--primary-color); color: #fff; transform: scale(1.1); box-shadow: 0 2px 6px rgba(255, 153, 0, 0.4); }
+        #themeToggle, #settingsBtn { padding: 10px 20px; background: var(--bg-light); border: none; border-radius: 8px; color: var(--text-light); cursor: pointer; transition: all 0.3s ease; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-left: 10px; }
+        #themeToggle:hover, #settingsBtn:hover { background: #444444; transform: scale(1.05); }
+        #statusBar { padding: 12px 40px; background: #222222; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; border-bottom: 2px solid #3a3a3a; box-shadow: 0 2px 8px var(--shadow); }
+        #statusBar .warning { color: var(--accent-yellow); font-weight: 600; display: flex; align-items: center; gap: 8px; }
         #statusBar .status-loading { color: var(--accent-blue); }
         #statusBar .status-active { color: var(--accent-green); }
         #statusBar .status-frozen { color: var(--accent-red); }
         #statusBar .status-not-playing { color: var(--accent-yellow); }
-
-        #timer {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--text-light);
-            text-shadow: 0 1px 2px var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .page {
-            display: none;
-            flex: 1;
-            overflow-y: auto;
-            animation: fadeIn 0.4s ease;
-            padding: 30px 40px;
-        }
-
-        .page.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #match.active {
-            padding: 0;
-            height: calc(100vh - 80px);
-        }
-
-        #playerContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex: 1;
-            background: linear-gradient(180deg, #000000, #1a1a1a);
-            overflow: hidden;
-        }
-
-        iframe#playerFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-
-        #controlPanel {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            gap: 10px;
-            z-index: 2;
-        }
-
-        .control-btn {
-            background: var(--bg-light);
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-
-        .control-btn:hover {
-            background: var(--primary-color);
-        }
-
-        #fullscreenBtn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 2;
-            transition: all 0.3s;
-        }
-
-        #fullscreenBtn:hover {
-            background: var(--primary-color);
-        }
-
-        .schedule-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .search-bar {
-            flex: 1;
-            min-width: 200px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 10px 40px 10px 15px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-light);
-            font-size: 1rem;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .search-bar input:focus {
-            box-shadow: 0 0 8px var(--primary-color);
-        }
-
-        .search-bar input::placeholder {
-            color: var(--text-medium);
-        }
-
-        .search-bar i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-medium);
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-btn:hover {
-            background: var(--primary-color);
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-        select {
-            padding: 10px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-light);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        select:focus {
-            outline: none;
-            box-shadow: 0 0 8px var(--primary-color);
-        }
-
-        .day-section {
-            margin-bottom: 30px;
-        }
-
-        .day-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 5px;
-        }
-
-        .schedule-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        }
-
-        .schedule-item {
-            background: linear-gradient(135deg, var(--schedule-box), var(--bg-light));
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid var(--schedule-box);
-            box-shadow: 0 4px 12px var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .schedule-item:hover {
-            transform: scale(1.05) rotate(1deg);
-            box-shadow: 0 8px 16px var(--shadow);
-        }
-
-        .schedule-item.live {
-            border-color: var(--accent-green);
-            animation: pulse 2s infinite;
-        }
-
-        .schedule-item.upcoming {
-            border-color: var(--accent-yellow);
-        }
-
-        .schedule-item.finished {
-            border-color: var(--accent-red);
-        }
-
-        .schedule-item.prime-time {
-            box-shadow: 0 0 10px var(--accent-yellow);
-        }
-
-        @keyframes pulse {
-            0% { border-color: var(--accent-green); }
-            50% { border-color: rgba(0, 255, 102, 0.5); }
-            100% { border-color: var(--accent-green); }
-        }
-
-        .match-details {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .match-details h3 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            transition: color 0.3s ease;
-        }
-
-        .schedule-item:hover h3 {
-            color: var(--secondary-color);
-        }
-
-        .match-details p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-        }
-
-        .match-status {
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 15px;
-            text-align: center;
-            margin-top: 8px;
-            width: fit-content;
-        }
-
+        #timer { font-weight: 700; font-size: 1.2rem; color: var(--text-light); text-shadow: 0 1px 2px var(--shadow); display: flex; align-items: center; gap: 8px; }
+        .page { display: none; flex: 1; overflow-y: auto; animation: fadeIn 0.4s ease; padding: 30px 40px; }
+        .page.active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        #match.active { padding: 0; height: calc(100vh - 80px); }
+        #playerContainer { position: relative; width: 100%; height: 100%; display: flex; flex: 1; background: linear-gradient(180deg, #000000, #1a1a1a); overflow: hidden; }
+        iframe#playerFrame { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; z-index: 0; }
+        #controlPanel { position: absolute; bottom: 20px; left: 20px; background: rgba(0, 0, 0, 0.8); border-radius: 8px; padding: 10px; display: flex; gap: 10px; z-index: 2; }
+        .control-btn { background: var(--bg-light); border: none; padding: 8px; border-radius: 50%; color: var(--text-light); cursor: pointer; transition: all 0.3s; font-size: 1rem; }
+        .control-btn:hover { background: var(--primary-color); }
+        #fullscreenBtn { position: absolute; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.7); color: #fff; border: none; padding: 10px; border-radius: 50%; cursor: pointer; z-index: 2; transition: all 0.3s; }
+        #fullscreenBtn:hover { background: var(--primary-color); }
+        .schedule-controls { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; align-items: center; }
+        .search-bar { flex: 1; min-width: 200px; position: relative; }
+        .search-bar input { width: 100%; padding: 10px 40px 10px 15px; background: var(--bg-light); border: none; border-radius: 8px; color: var(--text-light); font-size: 1rem; transition: box-shadow 0.3s ease; }
+        .search-bar input:focus { box-shadow: 0 0 8px var(--primary-color); }
+        .search-bar input::placeholder { color: var(--text-medium); }
+        .search-bar i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-medium); }
+        .control-btn { padding: 10px 20px; background: var(--bg-light); border: none; border-radius: 8px; color: var(--text-light); cursor: pointer; transition: all 0.3s ease; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .control-btn:hover { background: var(--primary-color); color: #fff; transform: translateY(-2px); }
+        select { padding: 10px; background: var(--bg-light); border: none; border-radius: 8px; color: var(--text-light); font-size: 1rem; cursor: pointer; transition: all 0.3s ease; }
+        select:focus { outline: none; box-shadow: 0 0 8px var(--primary-color); }
+        .day-section { margin-bottom: 30px; }
+        .day-title { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; }
+        .schedule-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .schedule-item { background: linear-gradient(135deg, var(--schedule-box), var(--bg-light)); padding: 15px; border-radius: 10px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 2px solid var(--schedule-box); box-shadow: 0 4px 12px var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+        .schedule-item:hover { transform: scale(1.05) rotate(1deg); box-shadow: 0 8px 16px var(--shadow); }
+        .schedule-item.live { border-color: var(--accent-green); animation: pulse 2s infinite; }
+        .schedule-item.upcoming { border-color: var(--accent-yellow); }
+        .schedule-item.finished { border-color: var(--accent-red); }
+        .schedule-item.prime-time { box-shadow: 0 0 10px var(--accent-yellow); }
+        @keyframes pulse { 0% { border-color: var(--accent-green); } 50% { border-color: rgba(0, 255, 102, 0.5); } 100% { border-color: var(--accent-green); } }
+        .match-details { display: flex; flex-direction: column; gap: 6px; }
+        .match-details h3 { margin: 0; font-size: 1.4rem; color: var(--primary-color); transition: color 0.3s ease; }
+        .schedule-item:hover h3 { color: var(--secondary-color); }
+        .match-details p { margin: 0; font-size: 0.9rem; color: var(--text-dark); }
+        .match-status { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 15px; text-align: center; margin-top: 8px; width: fit-content; }
         .match-status.live { background: var(--accent-green); color: #000; }
         .match-status.upcoming { background: var(--accent-yellow); color: #000; }
         .match-status.finished { background: var(--accent-red); color: #fff; }
-
-        .stream-count {
-            padding: 8px 15px;
-            background: var(--bg-light);
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-            color: var(--text-medium);
-        }
-
-        .stream-list {
-            display: grid;
-            gap: 20px;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            margin-top: 20px;
-        }
-
-        .stream-item {
-            padding: 15px;
-            background: var(--bg-light);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid var(--bg-medium);
-            text-align: center;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px var(--shadow);
-            gap: 10px;
-        }
-
-        .stream-item:hover {
-            background: var(--primary-color);
-            color: #fff;
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 8px 16px var(--shadow);
-        }
-
-        .stream-item i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .stream-item:hover i {
-            color: #fff;
-        }
-
-        .stream-quality {
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 10px;
-            margin-top: 5px;
-        }
-
+        .stream-count { padding: 8px 15px; background: var(--bg-light); border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: 600; color: var(--text-medium); }
+        .stream-list { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); margin-top: 20px; }
+        .stream-item { padding: 15px; background: var(--bg-light); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--bg-medium); text-align: center; font-weight: 600; font-size: 1.1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px var(--shadow); gap: 10px; }
+        .stream-item:hover { background: var(--primary-color); color: #fff; transform: scale(1.1) translateY(-5px); box-shadow: 0 8px 16px var(--shadow); }
+        .stream-item i { font-size: 1.5rem; color: var(--primary-color); }
+        .stream-item:hover i { color: #fff; }
+        .stream-quality { font-size: 0.8rem; padding: 4px 8px; border-radius: 10px; margin-top: 5px; }
         .stream-quality.hd { background: var(--accent-green); color: #000; }
         .stream-quality.sd { background: var(--accent-yellow); color: #000; }
-
-        #streamMatchTitle {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            text-align: center;
-            text-shadow: 0 2px 4px var(--shadow);
-        }
-
-        #loadingSpinner {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 12px solid var(--bg-light);
-            border-top: 12px solid var(--primary-color);
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 1s linear infinite;
-            z-index: 2000;
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        #settingsModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #settingsModal .modal-content {
-            background: var(--bg-medium);
-            padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            color: var(--text-light);
-        }
-
-        #settingsModal h2 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-
-        #settingsModal label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: 600;
-        }
-
-        #settingsModal select, #settingsModal input[type="checkbox"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-light);
-        }
-
-        #settingsModal button {
-            padding: 10px 20px;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #settingsModal button:hover {
-            background: var(--secondary-color);
-        }
-
-        footer {
-            padding: 15px 40px;
-            background: var(--bg-medium);
-            text-align: center;
-            color: var(--text-medium);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--bg-light);
-        }
-
-        @media (max-width: 1024px) {
-            .schedule-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-        }
-
+        #streamMatchTitle { font-size: 2.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 30px; text-align: center; text-shadow: 0 2px 4px var(--shadow); }
+        #loadingSpinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 12px solid var(--bg-light); border-top: 12px solid var(--primary-color); border-radius: 50%; width: 80px; height: 80px; animation: spin 1s linear infinite; z-index: 2000; }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        #settingsModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; justify-content: center; align-items: center; }
+        #settingsModal .modal-content { background: var(--bg-medium); padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; color: var(--text-light); }
+        #settingsModal h2 { font-size: 1.8rem; margin-bottom: 20px; color: var(--primary-color); }
+        #settingsModal label { display: block; margin: 10px 0 5px; font-weight: 600; }
+        #settingsModal select, #settingsModal input[type="checkbox"] { width: 100%; padding: 10px; margin-bottom: 15px; background: var(--bg-light); border: none; border-radius: 8px; color: var(--text-light); }
+        #settingsModal button { padding: 10px 20px; background: var(--primary-color); border: none; border-radius: 8px; color: #fff; cursor: pointer; transition: all 0.3s ease; }
+        #settingsModal button:hover { background: var(--secondary-color); }
+        footer { padding: 15px 40px; background: var(--bg-medium); text-align: center; color: var(--text-medium); font-size: 0.9rem; border-top: 1px solid var(--bg-light); }
+        @media (max-width: 1024px) { .schedule-grid { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); } }
         @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .nav-tabs {
-                gap: 10px;
-                justify-content: center;
-            }
-
-            .nav-tab {
-                font-size: 1rem;
-                padding: 8px 15px;
-            }
-
-            #statusBar {
-                padding: 10px 20px;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .page {
-                padding: 20px;
-            }
-
-            .schedule-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stream-list {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            }
-
-            #streamMatchTitle {
-                font-size: 2rem;
-            }
+            header { padding: 15px 20px; flex-direction: column; gap: 10px; }
+            .nav-tabs { gap: 10px; justify-content: center; }
+            .nav-tab { font-size: 1rem; padding: 8px 15px; }
+            #statusBar { padding: 10px 20px; flex-direction: column; gap: 10px; }
+            .page { padding: 20px; }
+            .schedule-grid { grid-template-columns: 1fr; }
+            .stream-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            #streamMatchTitle { font-size: 2rem; }
         }
-
         @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            .control-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-
-            .search-bar input {
-                font-size: 0.9rem;
-            }
+            header h1 { font-size: 1.8rem; }
+            .control-btn { padding: 8px 15px; font-size: 0.9rem; }
+            .search-bar input { font-size: 0.9rem; }
         }
-
-        .teams-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .team {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .team-badge {
-            width: auto;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .vs {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .error-message {
-            text-align: center;
-            color: var(--accent-red);
-            font-weight: 600;
-            padding: 20px;
-            background: var(--bg-light);
-            border-radius: 8px;
-        }
-
-        .error-message a {
-            color: var(--accent-blue);
-            text-decoration: underline;
-        }
+        .teams-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .team { display: flex; align-items: center; gap: 10px; }
+        .team-badge { width: auto; height: 40px; object-fit: contain; }
+        .vs { font-weight: bold; color: var(--primary-color); }
+        .error-message { text-align: center; color: var(--accent-red); font-weight: 600; padding: 20px; background: var(--bg-light); border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -814,7 +268,7 @@
         const notificationsEnabledCheckbox = document.getElementById('notificationsEnabled');
         const animationsEnabledCheckbox = document.getElementById('animationsEnabled');
         const baseUrl = 'https://streamed.pk';
-        const corsProxy = 'https://corsproxy.io/?';
+        const scheduleUrl = './matches.json'; // Path to static JSON file
 
         // Initialize settings
         timezoneSelect.value = timezone;
@@ -907,87 +361,31 @@
             }
         }
 
-        // API fetch with CORS proxy and caching
-        async function apiFetch(endpoint) {
-            try {
-                // Check cache first
-                const cacheKey = `matches_${region}_${endpoint}`;
-                const cachedData = localStorage.getItem(cacheKey);
-                if (cachedData) {
-                    const { data, timestamp } = JSON.parse(cachedData);
-                    const cacheAge = Date.now() - timestamp;
-                    if (cacheAge < 5 * 60 * 1000) { // Cache valid for 5 minutes
-                        return data;
-                    }
-                }
-
-                // Try CORS proxy first
-                const url = `${baseUrl}${endpoint}${endpoint.includes('?') ? '&' : '?'}region=${region}`;
-                let response = await fetch(`${corsProxy}${encodeURIComponent(url)}`);
-                if (!response.ok && response.status === 403) {
-                    // Fallback to direct API call if proxy fails
-                    response = await fetch(url);
-                }
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                
-                // Cache the response
-                localStorage.setItem(cacheKey, JSON.stringify({
-                    data,
-                    timestamp: Date.now()
-                }));
-                
-                return data;
-            } catch (error) {
-                console.error('API fetch error:', error);
-                throw error;
-            }
-        }
-
-        // Fetch matches from API
+        // Fetch matches from static JSON file
         async function fetchMatches() {
             showLoading(true);
             try {
-                const data = await apiFetch('/api/matches/football');
+                const response = await fetch(scheduleUrl);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
                 matches = data
-                    .filter(m => m.category === 'football' && m.date > 0)
+                    .filter(m => m.category === 'football' || !m.category) // Backward compatibility
                     .map(m => ({
-                        name: m.title,
-                        startTime: new Date(m.date),
+                        name: m.name,
+                        startTime: new Date(m.startTime),
                         sources: m.sources,
-                        teams: m.teams || {home: {name: 'Team A', badge: 'placeholder'}, away: {name: 'Team B', badge: 'placeholder'}}
+                        teams: m.teams || { home: { name: 'Team A', badge: 'placeholder' }, away: { name: 'Team B', badge: 'placeholder' } }
                     }));
                 matches.sort((a, b) => a.startTime - b.startTime);
                 renderSchedule('all');
                 if (notificationsEnabled) scheduleNotifications();
             } catch (error) {
                 console.error('Error fetching matches:', error);
-                const cachedMatches = localStorage.getItem(`matches_${region}_/api/matches/football`);
-                if (cachedMatches) {
-                    const { data } = JSON.parse(cachedMatches);
-                    matches = data
-                        .filter(m => m.category === 'football' && m.date > 0)
-                        .map(m => ({
-                            name: m.title,
-                            startTime: new Date(m.date),
-                            sources: m.sources,
-                            teams: m.teams || {home: {name: 'Team A', badge: 'placeholder'}, away: {name: 'Team B', badge: 'placeholder'}}
-                        }));
-                    matches.sort((a, b) => a.startTime - b.startTime);
-                    renderSchedule('all');
-                    scheduleContainer.innerHTML = `
-                        <div class="error-message">
-                            Using cached schedule due to access restrictions. For full access, try using a VPN like <a href="https://www.expressvpn.com" target="_blank">ExpressVPN</a>.
-                        </div>
-                        ${scheduleContainer.innerHTML}
-                    `;
-                } else {
-                    scheduleContainer.innerHTML = `
-                        <div class="error-message">
-                            Unable to load schedule due to IP restrictions. Try using a VPN like <a href="https://www.expressvpn.com" target="_blank">ExpressVPN</a> to access the schedule.
-                        </div>
-                    `;
-                }
+                scheduleContainer.innerHTML = `
+                    <div class="error-message">
+                        Unable to load schedule. Please try again later.
+                    </div>
+                `;
             } finally {
                 showLoading(false);
             }
@@ -1131,7 +529,7 @@
             renderSchedule('all', query);
         }
 
-        // Render streams
+        // Render streams (still uses API for streams)
         async function renderStreams() {
             const match = matches[currentMatchIndex];
             streamMatchTitle.textContent = match.name;
@@ -1139,8 +537,9 @@
             try {
                 const allStreamsArrays = await Promise.all(match.sources.map(async source => {
                     try {
-                        const streamData = await apiFetch(`/api/stream/${source.source}/${source.id}`);
-                        return streamData;
+                        const response = await fetch(`${baseUrl}/api/stream/${source.source}/${source.id}`);
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return await response.json();
                     } catch {
                         return [];
                     }
